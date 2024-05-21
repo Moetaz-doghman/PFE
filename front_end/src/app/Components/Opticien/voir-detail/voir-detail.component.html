@@ -1,0 +1,74 @@
+<div class="dialog-content">
+    <div class="page-container">
+      <!-- Contenu du résumé -->
+      <div class="summary-container">
+        <div class="summary-item">
+          <span>Adhérent :</span>
+          <span>{{ data.adherant?.nom }} {{ data.adherant?.prenom }} </span>
+        </div>
+        <ng-container *ngIf="data.isBeneficiaire">
+          <div class="summary-item">
+            <span>Bénéficiaire :</span>
+            <span>{{ data.adherant.beneficiaires[0].nom }} {{ data.adherant.beneficiaires[0].prenom }} </span>
+          </div>
+        </ng-container>
+        <div class="summary-item">
+          <span>Matricule :</span>
+          <span>{{ data.adherant?.matricule }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Sphere droit :</span>
+          <span> {{ data.sphereD }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Sphere gauche :</span>
+            <span> {{ data.sphereG }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Axe droit :</span>
+            <span> {{ data.axeD }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Axe gauche :</span>
+            <span> {{ data.axeG }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Acuite droit :</span>
+            <span> {{ data.acuiteD }}</span>
+        </div>
+        <div class="summary-item">
+            <span>AcuiteD gauche :</span>
+            <span> {{ data.acuiteG }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Valeur verre oeil gauche :</span>
+            <span> {{ data.valeurVerreOeilGauche }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Valeur verre oeil droit :</span>
+            <span> {{ data.valeurVerreOeilDroit }}</span>
+        </div>
+        <div class="summary-item">
+            <span>Valeur Monture :</span>
+            <span> {{ data.valeurMonture }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Total ordonnance en TND :</span>
+          <span>{{ data.totalOrdonnance }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Montant Ticket modérateur en TND :</span>
+          <span>{{ data.montantTicketModerateur }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Montant remboursé par I-way Solutions en TND :</span>
+          <span>{{ data.montantRembourse }}</span>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button mat-button (click)="onNoClick()">Précédent</button>
+         <button mat-button [mat-dialog-close]="true" (click)="validerPrestation(data.isBeneficiaire)">Valider</button>
+      </div>
+    </div>
+  </div>
+  

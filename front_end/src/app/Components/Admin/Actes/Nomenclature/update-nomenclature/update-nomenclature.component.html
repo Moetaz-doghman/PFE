@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <h3 class="mb-4">Mettre à jour une nomenclature</h3>
+  <form [formGroup]="nomenclatureForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="codeActe" class="form-label">Code Acte <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="codeActe" formControlName="codeActe" [ngClass]="{'is-invalid': nomenclatureForm.get('codeActe').invalid && nomenclatureForm.get('codeActe').touched}">
+        <div *ngIf="nomenclatureForm.get('codeActe').invalid && nomenclatureForm.get('codeActe').touched" class="invalid-feedback">
+          Code Acte est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="cotation" class="form-label">Cotation <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="cotation" formControlName="cotation" [ngClass]="{'is-invalid': nomenclatureForm.get('cotation').invalid && nomenclatureForm.get('cotation').touched}">
+        <div *ngIf="nomenclatureForm.get('cotation').invalid && nomenclatureForm.get('cotation').touched" class="invalid-feedback">
+          Cotation est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="avisMedical" class="form-label">Avis Médical <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="avisMedical" formControlName="avisMedical" [ngClass]="{'is-invalid': nomenclatureForm.get('avisMedical').invalid && nomenclatureForm.get('avisMedical').touched}">
+        <div *ngIf="nomenclatureForm.get('avisMedical').invalid && nomenclatureForm.get('avisMedical').touched" class="invalid-feedback">
+          Avis Médical est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="acteDentaire" class="form-label">Acte Dentaire <span class="text-danger">*</span></label>
+        <select class="form-select" id="acteDentaire" formControlName="acteDentaire" [ngClass]="{'is-invalid': nomenclatureForm.get('acteDentaire').invalid && nomenclatureForm.get('acteDentaire').touched}">
+          <option *ngFor="let acteDentaire of acteDentaires" [value]="acteDentaire.id">{{ acteDentaire.nom }}</option>
+        </select>
+        <div *ngIf="nomenclatureForm.get('acteDentaire').invalid && nomenclatureForm.get('acteDentaire').touched" class="invalid-feedback">
+          Acte Dentaire est obligatoire
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="nomenclatureForm.invalid">Mettre à jour</button>
+    <button type="button" class="btn btn-secondary" (click)="onReset()">Réinitialiser</button>
+    <button type="button" class="btn btn-danger" (click)="goBack()">Annuler</button>
+  </form>
+</div>

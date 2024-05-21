@@ -1,0 +1,13 @@
+export interface Role {
+    id: number;
+    name: ERole;
+  }
+
+  export enum ERole {
+    ROLE_ADMIN = 'ROLE_ADMIN',
+    ROLE_OPTICIEN = 'ROLE_OPTICIEN',
+    ROLE_DENTIST = 'ROLE_DENTIST',
+    ROLE_OPTICIEN_CONTROLEUR = 'ROLE_OPTICIEN_CONTROLEUR',
+    ROLE_DENTIST_CONTROLEUR = 'ROLE_DENTIST_CONTROLEUR',
+  }
+

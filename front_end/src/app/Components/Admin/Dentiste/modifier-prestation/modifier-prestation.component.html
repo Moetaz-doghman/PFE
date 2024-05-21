@@ -1,0 +1,70 @@
+<section class="h-100">
+  <div class="container-fluid h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-md-10">
+        <div class="card card-registration">
+          <div class="card-body p-5">
+            <h3 class="mb-4 text-uppercase register text-center">Formulaire de prestation</h3>
+            <form [formGroup]="prestationForm" (ngSubmit)="onSubmit()">
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <label for="montantTotal" class="form-label">Montant total</label>
+                  <input type="number" class="form-control form-control-lg" id="montantTotal"
+                    formControlName="montantTotal">
+                </div>
+                <div class="col-md-6">
+                  <label for="montantRembourse" class="form-label">Montant remboursé</label>
+                  <input type="number" class="form-control form-control-lg" id="montantRembourse"
+                    formControlName="montantRembourse">
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <label for="totalCotation" class="form-label">Total cotation</label>
+                  <input type="number" class="form-control form-control-lg" id="totalCotation"
+                    formControlName="totalCotation">
+                </div>
+                <div class="col-md-6">
+                  <label for="montantTicketModerateur" class="form-label">Montant ticket modérateur</label>
+                  <input type="number" class="form-control form-control-lg" id="montantTicketModerateur"
+                    formControlName="montantTicketModerateur">
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <button type="button" class="btn btn-info btn-lg btn-block" (click)="calculer()">Calculer</button>
+                </div>
+                <div class="col-md-6">
+                  <label for="cleCotation" class="form-label">Clé cotation</label>
+                  <input type="text" class="form-control form-control-lg" id="cleCotation" formControlName="cleCotation"
+                    readonly>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-12">
+                  <label for="actesDentaires" class="form-label">Actes dentaires</label>
+                  <div class="d-flex justify-content-center flex-wrap">
+                    <mat-checkbox *ngFor="let acte of actesDentaires" class="me-3" [checked]="acte.selected"
+                      (change)="toggleActeSelection(acte); logSelectedActes()">
+                      {{ acte.name }}
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="d-flex justify-content-between">
+
+                  <button type="submit" class="btn btn-primary btn-lg btn-block">Enregistrer</button>
+                  <button class="btn btn-success btn-lg btn-block" (click)="goBack()">
+                    <i class="fas fa-arrow-left"></i> Retour
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

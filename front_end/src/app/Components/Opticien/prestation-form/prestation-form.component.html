@@ -1,0 +1,160 @@
+<!-- Dialog content -->
+<div class="dialog-content">
+  <!-- Première page -->
+  <div *ngIf="!showSecondPage" class="page-container">
+    <h3 *ngIf="!data.isBeneficiaire" class="title">
+      Vous êtes sur le point d'ajouter une consultation pour l'adhérent
+      {{ adherant?.nom }} {{ adherant?.prenom }} avec le matricule
+      {{ adherant?.matricule }}
+    </h3>
+    <h3 *ngIf="data.isBeneficiaire" class="title">
+      Vous êtes sur le point d'ajouter une consultation pour le beneficiaire de
+      l'adhérent {{ adherant?.nom }} {{ adherant?.prenom }} avec le matricule
+      {{ adherant?.matricule }}
+    </h3>
+    <ng-container *ngIf="data.isBeneficiaire">
+      <div class="summary-item">
+        <span>Bénéficiaire :</span>
+        <span>{{ adherant?.beneficiaires[selectedBeneficiaireIndex].nom }}
+          {{ adherant?.beneficiaires[selectedBeneficiaireIndex].prenom }}</span>
+      </div>
+      <div class="summary-item">
+        <span>Date naissance :</span>
+        <span>{{
+          adherant?.beneficiaires[selectedBeneficiaireIndex].dateNais | date
+          }}
+        </span>
+      </div>
+      <div class="summary-item">
+        <span>Qualité :</span>
+        <span>{{ adherant?.beneficiaires[selectedBeneficiaireIndex].qualite }}
+        </span>
+      </div>
+      <div class="summary-item">
+        <span>Sexe :</span>
+        <span>{{ adherant?.beneficiaires[selectedBeneficiaireIndex].sexe }}
+        </span>
+      </div>
+    </ng-container>
+    <button mat-stroked-button class="next-button" (click)="showSecondPage = true">
+      Suivant
+    </button>
+  </div>
+
+  <!-- Deuxième page -->
+  <div *ngIf="showSecondPage" class="page-container">
+    <div class="scrollable-content">
+
+      <form [formGroup]="optiqueForm" class="form-container">
+        <h3 class="section-title">Date Consultation :</h3>
+        <mat-form-field class="input-field">
+          <input matInput [value]="currentDate | date" disabled />
+        </mat-form-field>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3 class="section-title">Sphere Droite :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Sphere Droite" formControlName="sphereD" />
+            </mat-form-field>
+          </div>
+          <div class="flex-item">
+            <h3 class="section-title">Sphere Gauche :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Sphere Gauche" formControlName="sphereG" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3 class="section-title">Axe Droit :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Axe Droit" formControlName="axeD" />
+            </mat-form-field>
+          </div>
+          <div class="flex-item">
+            <h3 class="section-title">Axe Gauche :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Axe Gauche" formControlName="axeG" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3 class="section-title">Acuité Droite :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Acuité Droite" formControlName="acuiteD" />
+            </mat-form-field>
+          </div>
+          <div class="flex-item">
+            <h3 class="section-title">Acuité Gauche :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Acuité Gauche" formControlName="acuiteG" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3 class="section-title">Valeur Verre Œil Droit :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Valeur Verre Œil Droit"
+                formControlName="valeurVerreOeilDroit" />
+            </mat-form-field>
+          </div>
+          <div class="flex-item">
+            <h3 class="section-title">Valeur Verre Œil Gauche :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Valeur Verre Œil Gauche"
+                formControlName="valeurVerreOeilGauche" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3 class="section-title">Valeur Monture :</h3>
+            <mat-form-field class="input-field-cal">
+              <input type="number" matInput placeholder="Valeur Monture" formControlName="valeurMonture" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <button mat-stroked-button class="calculate-button" (click)="calculer()">
+          Calculer
+        </button>
+
+        <div class="result-container">
+          <div class="result">
+            <h3 class="section-title">Total ordonnance en TND :</h3>
+            <mat-form-field class="input-field">
+              <input matInput value="{{ totalOrdonnance }}" disabled />
+            </mat-form-field>
+          </div>
+          <div class="result">
+            <h3 class="section-title">Montant Ticket modérateur en TND :</h3>
+            <mat-form-field class="input-field">
+              <input matInput value="{{ montantTicketModerateur }}" disabled />
+            </mat-form-field>
+          </div>
+          <div class="result">
+            <h3 class="section-title">
+              Montant remboursé par I-way Solutions en TND :
+            </h3>
+            <mat-form-field class="input-field">
+              <input matInput value="{{ montantRembourse }}" disabled />
+            </mat-form-field>
+          </div>
+        </div>
+        <button mat-raised-button color="primary" class="next-button" [disabled]="!isNextButtonEnabled()"
+          (click)="openResumeDialog()">
+          Suivant
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+</div>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue à I-Sante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #78ab46;
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .footer {
+            background-color: #777;
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer img {
+            height: auto;
+            max-height: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Bienvenue à I-Sante</h1>
+    </div>
+    <div class="content">
+        <p>Bonjour <span th:text="${name}"></span>,</p>
+        <p>Code OTP pour la demande de réinitialisation de mot de passe : <span th:text="${otp}"></span></p>
+        <p>Au revoir,</p>
+    </div>
+    <div class="footer">
+        <img src="http://localhost:8034/images/logo.png"  alt="Logo"/>
+        <p>Date d'aujourd'hui : <span th:text="${#dates.format(currentDate, 'dd-MM-yyyy')}"></span></p>
+    </div>
+</div>
+</body>
+</html>

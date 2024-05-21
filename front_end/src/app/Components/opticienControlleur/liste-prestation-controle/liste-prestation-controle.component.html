@@ -1,0 +1,245 @@
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container mt-4">
+            <h2 class="card-header text-center">
+              <i class="fa-solid fa-bars"></i> Historique des prestations de
+              contrôle
+            </h2>
+            <div class="mb-3">
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>Numéro transaction</th>
+                      <th>Matricule de l'assuré</th>
+                      <th>Nom de l'assuré</th>
+                      <th>Date de prestation</th>
+                      <th>Montant total</th>
+                      <th>Type de prestation</th>
+                      <th>Détails</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let prestation of prestations">
+                      <td>{{ prestation.ref }}</td>
+                      <td>{{ prestation.adherant.matricule }}</td>
+                      <td>{{ prestation.adherant.nom }}</td>
+                      <td>{{ prestation.dateCreation  }}</td>
+                      <td>{{ prestation.montantTotal }}</td>
+                      <td>{{ prestation.type }}</td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-sm"
+                          data-bs-toggle="modal"
+                          data-bs-target="#voirdetails"
+                          (click)="showDetails(prestation)"
+                        >
+                          Voir détails
+                        </button>
+                      </td>
+                      <td>
+                        <ng-container *ngIf="prestation.rapportcontreVisite">
+                          <button
+                          mat-icon-button *ngIf="!downloadingPDF" (click)="showPdf(prestation)"
+                          [disabled]="downloadingPDF">
+                          <mat-icon>get_app</mat-icon>
+                          <canvas #qrCanvas style="display: none;"></canvas>
+                        </button>
+                        <div *ngIf="downloadingPDF" class="spinner-border text-primary" role="status">
+                          <span class="sr-only">Chargement...</span>
+                        </div>
+
+
+                        </ng-container>
+                        <ng-container *ngIf="!prestation.rapportcontreVisite">
+                          <button
+                            type="button"
+                            (click)="showPrestationDetails(prestation.id)"
+                            class="btn btn-success btn-sm"
+                          >
+                            Ajouter rapport
+                          </button>
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails -->
+<div
+  class="modal fade"
+  id="voirdetails"
+  tabindex="-1"
+  aria-labelledby="voirdetailsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="voirdetailsLabel">
+          Détails de la prestation
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Affichage des détails de la prestation -->
+        <div *ngIf="selectedPrestation">
+          <p>Numéro transaction : {{ selectedPrestation.ref }}</p>
+          <p>
+            Matricule de l'assuré : {{ selectedPrestation.adherant.matricule }}
+          </p>
+          <p>Nom de l'assuré : {{ selectedPrestation.adherant.nom }}</p>
+          <!-- Additional details -->
+          <p>Montant total : {{ selectedPrestation.montantTotal }}</p>
+          <p>Montant remboursé : {{ selectedPrestation.montantRembourse }}</p>
+          <div class="actes">
+            <span
+              class="badge bg-success acte-badge"
+              *ngFor="let acte of selectedPrestation.actes"
+            >
+              {{ acte.nom }}
+            </span>
+          </div>
+
+          <div *ngIf="beneficiaire">
+            <p>Nom du bénéficiaire : {{ beneficiaire.nom }}</p>
+            <p>Sexe du bénéficiaire : {{ beneficiaire.sexe }}</p>
+            <p>Qualité du bénéficiaire : {{ beneficiaire.qualite }}</p>
+            <p>
+              Date de naissance : {{ beneficiaire.dateNais | simpleDateFormat }}
+            </p>
+            <!-- Display other beneficiary details -->
+          </div>
+          <!-- ... Autres détails de la prestation -->
+        </div>
+
+        <div *ngIf="selectedPrestation">
+
+          <p>axe doite : {{ selectedPrestation.axeD }}</p>
+          <p>axe  gauche : {{ selectedPrestation.montantRembourse }}</p>
+          <p>sphére doite : {{ selectedPrestation.sphereD }}</p>
+          <p>sphére  gauche : {{ selectedPrestation.sphereG }}</p>
+          <p>valeur monture  : {{ selectedPrestation.valeurMonture }}</p>
+          <p>valeur verre droite  : {{ selectedPrestation.valeurVerreOeilDroit }}</p>
+          <p>valeur verre gauche  : {{ selectedPrestation.valeurVerreOeilGauche }}</p>
+
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="pdfSection" [style.display]="showSecondContainer ? 'block' : 'none'">
+  <div class="card">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand mr-auto" href="#">
+        <img src="assets/images/logo.png" width="100" height="50" class="d-inline-block align-top" alt="" />
+      </a>
+      <span class="navbar-text mx-auto mx-3">
+        <h2 class="text-center font-size-12">Rapport opticien</h2>
+      </span>
+      <span class="navbar-text ml-auto mx-3">
+        <h5>{{ today | date : "dd/MM/yyyy" }}</h5>
+      </span>
+    </nav>
+    <div class="row justify-content-center">
+      <div class="col-md-8" *ngIf="selectedPrestations">
+        <p class="">Monsieur / Madame: {{ rapportOpticien.prestation.adherant.nom }}</p>
+        <p class="" *ngIf="beneficiaire_rapport">Bénéficiaire: {{ beneficiaire_rapport.nom }} {{ beneficiaire_rapport.prenom }}</p>
+        <p class="" *ngIf="beneficiaire_rapport">Qualité du bénéficiaire: {{ beneficiaire_rapport.qualite }}</p>
+        <br />
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="bg-light">
+              <tr>
+                <th scope="col" colspan="3" class="text-center">OD</th>
+                <th scope="col" colspan="3" class="text-center">OG</th>
+              </tr>
+              <tr>
+                <th scope="col" class="text-center">Sphère</th>
+                <th scope="col" class="text-center">Axe</th>
+                <th scope="col" class="text-center">Addition</th>
+                <th scope="col" class="text-center">Sphère</th>
+                <th scope="col" class="text-center">Axe</th>
+                <th scope="col" class="text-center">Addition</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">{{ rapportOpticien.sphereD }}</td>
+                <td class="text-center">{{ rapportOpticien.axeD }}</td>
+                <td class="text-center">{{ rapportOpticien.acuiteD }}</td>
+                <td class="text-center">{{ rapportOpticien.sphereG }}</td>
+                <td class="text-center">{{ rapportOpticien.axeG }}</td>
+                <td class="text-center">{{ rapportOpticien.acuiteG }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br />
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card mt-4">
+                <div class="card-body">
+                  <div class="info-section">
+                    <div>
+                      <p class="">Prix de la monture min: {{ rapportOpticien.prixMontureMin }}</p>
+                      <p class="">Prix de la monture max: {{ rapportOpticien.prixMontureMax }}</p>
+                      <p class="">Nature des verres: {{ rapportOpticien.natureVerre }}</p>
+                      <p class="">Prix de verre min: {{ rapportOpticien.valeurVerreBlancMin }}</p>
+                      <p class="">Prix de verre max: {{ rapportOpticien.valeurVerreMax }}</p>
+                      <p class="">Observation: {{ rapportOpticien.observation }}</p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class=" col-md-8 optician-section">
+        <p  class="h2 font-size-12" *ngIf="selectedPrestations">Opticien: {{ rapportOpticien.prestation.user.nom }} {{ rapportOpticien.prestation.user.prenom }}</p>
+      </div>
+
+
+      <div class="col-md-12">
+        <div class="container mt-4 d-flex justify-content-center">
+          <div>
+            <img *ngIf="qrCodeURL" [src]="qrCodeURL" alt="QR Code" class="img-fluid">
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+</div>
+

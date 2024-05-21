@@ -1,0 +1,139 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title text-center mb-4">Liste des professionnels de santé</h2>
+    <div class="text-end mb-3">
+      <!-- Toggle filter button -->
+      <button class="btn btn-primary" (click)="toggleFilter()">
+        <span *ngIf="switchState">
+          Afficher tous les utilisateurs <i class="fas fa-eye"></i>
+        </span>
+        <span *ngIf="!switchState">
+          Afficher uniquement les utilisateurs actifs <i class="fas fa-filter"></i>
+        </span>
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <!-- Table header -->
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Matricule</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Adresse</th>
+            <th scope="col">Téléphone</th>
+            <th scope="col">Identité bancaire</th>
+            <th scope="col">Rôle(s)</th>
+            <th>Status</th>
+            <th>Activer</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <!-- Table body -->
+        <tbody>
+          <ng-container *ngFor="let professionnel of dataSource.data">              <tr>
+              <td>{{ professionnel.email }}</td>
+              <td>{{ professionnel.matricule }}</td>
+              <td>{{ professionnel.nom }}</td>
+              <td>{{ professionnel.prenom }}</td>
+              <td>{{ professionnel.adresse }}</td>
+              <td>{{ professionnel.tel }}</td>
+              <td>{{ professionnel.identiteBancaire }}</td>
+              <td>
+                <ul class="list-unstyled">
+                  <li *ngFor="let role of professionnel.roles">
+                    <span class="badge" [ngClass]="getRoleBadgeClass(role.name)">{{ role.name }}
+                      <em (click)="supprimerRole(professionnel.id, role.name)" style="cursor: pointer;" class="fas fa-trash text-danger"></em>
+                    </span>
+                  </li>
+                </ul>
+                <em class="fas fa-edit text-primary" style="cursor: pointer;" (click)="userIdToDelete = professionnel.id" data-bs-toggle="modal" data-bs-target="#staticedit"></em>
+              </td>
+              <td class="text-center">
+                <span class="badge"
+                  [class.bg-success]="professionnel.active"
+                  [class.bg-danger]="!professionnel.active">
+                  {{ professionnel.active ? 'Active' : 'Not Active' }}
+                </span>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input type="checkbox" class="form-check-input" id="customSwitch{{ professionnel.id }}" [(ngModel)]="professionnel.active" (change)="onChangeSwitch(professionnel.id, !professionnel.active)">
+                  <label class="form-check-label" for="customSwitch{{ professionnel.id }}"></label>
+                </div>
+              </td>
+              <td class="cursor-pointer" style="cursor: pointer;">
+                <em (click)="userIdToDelete = professionnel.id" class="fas fa-trash text-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></em>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination -->
+    <mat-paginator
+    [length]="500"
+      [pageSize]="5"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      [pageIndex]="currentPage"
+      [showFirstLastButtons]="true">
+    </mat-paginator>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Confirm!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Would you really want to delete this data?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link" (click)="userIdToDelete = -1" data-bs-dismiss="modal">
+          <em class="fas fa-times"></em>&nbsp;Cancel
+        </button>
+        <button (click)="delete()" type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          <em class="fas fa-trash"></em>&nbsp;Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Role Modal -->
+<div class="modal fade" id="staticedit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Ajouter un rôle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="ajouterRole(userIdToDelete, nouveauRole)" #ajouterRoleForm="ngForm">
+          <div class="form-group">
+            <label for="role">Rôle :</label>
+            <select class="form-select form-control-lg" id="role" name="role" [(ngModel)]="nouveauRole" required>
+              <option value="ROLE_OPTICIEN">ROLE_OPTICIEN</option>
+              <option value="ROLE_DENTIST">ROLE_DENTIST</option>
+              <option value="ROLE_OPTICIEN_CONTROLEUR">ROLE_OPTICIEN_CONTROLEUR</option>
+              <option value="ROLE_DENTIST_CONTROLEUR">ROLE_DENTIST_CONTROLEUR</option>
+            </select>
+          </div>
+          &nbsp;
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

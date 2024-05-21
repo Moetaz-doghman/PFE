@@ -1,0 +1,60 @@
+.container {
+    padding: 20px;
+  }
+  
+  /* Add blue border to each column */
+  .col-md-6, .col-md-4, .col-md-8 {
+    padding: 15px;
+  }
+  
+  /* Remove right border from last column */
+  .col-md-8 {
+    border-right: none;
+  }
+  
+  .user-data-section {
+    border-bottom: 5px solid skyblue;
+  }
+
+
+
+  /* Styling for the table */
+.table {
+  width: 100%;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f0f0f0;
+}
+
+/* Styling for the form */
+.form-label {
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.text-danger {
+  color: #dc3545;
+  margin-top: 5px;
+}
+
+.modal-footer {
+  justify-content: space-between;
+}
+
+  
+  
+  

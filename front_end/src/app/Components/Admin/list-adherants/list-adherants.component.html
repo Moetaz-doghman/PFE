@@ -1,0 +1,61 @@
+<div class="card">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Liste des adhérents</h2>
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+          <!-- Table header -->
+          <thead class="bg-light">
+            <tr>
+              <th scope="col">CIN</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Sexe</th>
+              <th scope="col">Date de Naissance</th>
+              <th scope="col">Gouvernement de Naissance</th>
+              <th scope="col">Pays de Naissance</th>
+              <th scope="col">Numéro de Téléphone</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <!-- Table body -->
+          <tbody>
+            <tr *ngFor="let adherant of dataSource.data">
+              <td>{{ adherant.cin }}</td>
+              <td>{{ adherant.nom }}</td>
+              <td>{{ adherant.prenom }}</td>
+              <td>{{ adherant.sexe }}</td>
+              <td>{{ adherant.dateNais |date }}</td>
+              <td>{{ adherant.paysNais }}</td>
+              <td>{{ adherant.gouvNais }}</td>
+              <td>{{ adherant.numtel }}</td>
+             
+
+              <td>
+                <button class="btn btn-danger" (click)="onDeleteAdherent(adherant.id)" data-bs-toggle="modal"
+                  data-bs-target="#deleteConfirmationModal">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="btn btn-success" (click)="UpdateAdherentDetails(adherant.id)">
+                  <i class="fa fa-pencil-square"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+      <mat-paginator
+        [length]="totalItems"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        [pageIndex]="currentPage"
+        [showFirstLastButtons]="true">
+      </mat-paginator>
+    </div>
+  </div>
+  
+  
+  
+  

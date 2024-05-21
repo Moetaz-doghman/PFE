@@ -1,0 +1,284 @@
+<div class="container mt-4" *ngIf="prestation">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="text-center">Ajouter un rapport de contre visite</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="details-section">
+            <h4>Informations sur l'adhérent</h4>
+            <div class="details-item">
+              <span class="details-label">Nom:</span>
+              <span class="details-value">{{ prestation.adherant.nom }} {{ prestation.adherant.prenom }}</span>
+            </div>
+            <div class="details-item">
+              <span class="details-label">Matricule:</span>
+              <span class="details-value">{{ prestation.adherant.matricule }}</span>
+            </div>
+            <div class="details-item">
+              <span class="details-label">Plafond:</span>
+              <span class="details-value">{{ prestation.adherant.plafond }}</span>
+            </div>
+            <div class="details-item">
+              <span class="details-label">Num tel:</span>
+              <span class="details-value">{{ prestation.adherant.numtel }}</span>
+            </div>
+            <!-- Beneficiary details -->
+            <h4 class="mt-4">Informations sur le bénéficiaire</h4>
+            <div *ngIf="prestation.beneficiaire; else noBeneficiary">
+              <div class="details-item">
+                <span class="details-label">Nom:</span>
+                <span class="details-value">{{ prestation.beneficiaire.nom }} {{ prestation.beneficiaire.prenom
+                  }}</span>
+              </div>
+              <div class="details-item">
+                <span class="details-label">Qualité:</span>
+                <span class="details-value">{{ prestation.beneficiaire.qualite }}</span>
+              </div>
+              <div class="details-item">
+                <span class="details-label">Plafond:</span>
+                <span class="details-value">{{ prestation.beneficiaire.plafond }}</span>
+              </div>
+            </div>
+            <ng-template #noBeneficiary>
+              <p class="mt-3">Pas d'informations sur le bénéficiaire</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <!-- Form for rapport de contre visite -->
+      <form [formGroup]="rapportForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="observation">Observation:</label>
+              <input type="text" formControlName="observation" class="form-control" id="observation">
+            </div>
+
+            <div *ngIf="
+              rapportForm.get('observation')?.hasError('required') &&
+              rapportForm.get('observation').touched
+            " class="text-danger">
+              observation est obligatoire
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="sphereD">SphereD:</label>
+              <input type="number" formControlName="sphereD" class="form-control" id="sphereD">
+            </div>
+            <div *ngIf="
+                            rapportForm.get('sphereD')?.hasError('required') &&
+                            rapportForm.get('sphereD')?.touched
+                          " class="text-danger">
+              sphére droite est obligatoire
+            </div>
+            <div *ngIf="
+                            rapportForm.get('sphereD')?.hasError('pattern') &&
+                            rapportForm.get('sphereD')?.touched
+                          " class="text-danger">
+              sphére droite doit contenir seulement des nombres
+            </div>
+
+
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="axeD">AxeD:</label>
+              <input type="number" formControlName="axeD" class="form-control" id="axeD">
+            </div>
+
+            <div *ngIf="
+              rapportForm.get('axeD')?.hasError('required') &&
+              rapportForm.get('axeD')?.touched
+            " class="text-danger">
+              axe droite droite est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('axeD')?.hasError('pattern') &&
+              rapportForm.get('axeD')?.touched
+            " class="text-danger">
+              axe droite doit contenir seulement des nombres
+            </div>
+
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="acuiteD">AcuitéD:</label>
+              <input type="number" formControlName="acuiteD" class="form-control" id="acuiteD">
+            </div>
+            <div *ngIf="
+              rapportForm.get('acuiteD')?.hasError('required') &&
+              rapportForm.get('acuiteD')?.touched
+            " class="text-danger">
+              acuiteD est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('acuiteD')?.hasError('pattern') &&
+              rapportForm.get('acuiteD')?.touched
+            " class="text-danger">
+              acuiteD doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="sphereG">SphereG:</label>
+              <input type="number" formControlName="sphereG" class="form-control" id="sphereG">
+            </div>
+            <div *ngIf="
+              rapportForm.get('sphereG')?.hasError('required') &&
+              rapportForm.get('sphereG')?.touched
+            " class="text-danger">
+              sphereG est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('sphereG')?.hasError('pattern') &&
+              rapportForm.get('sphereG')?.touched
+            " class="text-danger">
+              sphereG doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="axeG">AxeG:</label>
+              <input type="number" formControlName="axeG" class="form-control" id="axeG">
+            </div>
+            <div *ngIf="
+              rapportForm.get('axeG')?.hasError('required') &&
+              rapportForm.get('axeG')?.touched
+            " class="text-danger">
+              axeG est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('axeG')?.hasError('pattern') &&
+              rapportForm.get('axeG')?.touched
+            " class="text-danger">
+              axeG doit contenir seulement des nombres
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="acuiteG">AcuitéG:</label>
+              <input type="number" formControlName="acuiteG" class="form-control" id="acuiteG">
+            </div>
+            <div *ngIf="
+              rapportForm.get('acuiteG')?.hasError('required') &&
+              rapportForm.get('acuiteG')?.touched
+            " class="text-danger">
+              acuiteG est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('acuiteG')?.hasError('pattern') &&
+              rapportForm.get('acuiteG')?.touched
+            " class="text-danger">
+              acuiteG doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="valeurVerreMin">Valeur Verre Min:</label>
+              <input type="number" formControlName="valeurVerreMin" class="form-control" id="valeurVerreMin">
+            </div>
+            <div *ngIf="
+              rapportForm.get('valeurVerreMin')?.hasError('required') &&
+              rapportForm.get('valeurVerreMin')?.touched
+            " class="text-danger">
+              valeurVerreMin est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('valeurVerreMin')?.hasError('pattern') &&
+              rapportForm.get('valeurVerreMin')?.touched
+            " class="text-danger">
+              valeurVerreMin doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="valeurVerreMax">Valeur Verre Max:</label>
+              <input type="number" formControlName="valeurVerreMax" class="form-control" id="valeurVerreMax">
+            </div>
+            <div *ngIf="
+              rapportForm.get('valeurVerreMax')?.hasError('required') &&
+              rapportForm.get('valeurVerreMax')?.touched
+            " class="text-danger">
+              valeurVerreMax est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('valeurVerreMax')?.hasError('pattern') &&
+              rapportForm.get('valeurVerreMax')?.touched
+            " class="text-danger">
+              valeurVerreMax doit contenir seulement des nombres
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="PrixMontureMin">Prix Monture Min:</label>
+              <input type="number" formControlName="prixMontureMin" class="form-control" id="PrixMontureMin">
+            </div>
+            <div *ngIf="
+              rapportForm.get('prixMontureMin')?.hasError('required') &&
+              rapportForm.get('prixMontureMin')?.touched
+            " class="text-danger">
+              prix monture minimum est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('prixMontureMin')?.hasError('pattern') &&
+              rapportForm.get('prixMontureMin')?.touched
+            " class="text-danger">
+              prix monture minimum doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="PrixMontureMax">Prix Monture Max:</label>
+              <input type="number" formControlName="prixMontureMax" class="form-control" id="PrixMontureMax">
+            </div>
+            <div *ngIf="
+              rapportForm.get('prixMontureMax')?.hasError('required') &&
+              rapportForm.get('prixMontureMax')?.touched
+            " class="text-danger">
+              prix monture maximumn est obligatoire
+            </div>
+            <div *ngIf="
+              rapportForm.get('prixMontureMax')?.hasError('pattern') &&
+              rapportForm.get('prixMontureMax')?.touched
+            " class="text-danger">
+              prix monture maximumn doit contenir seulement des nombres
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="natureVerre">Nature Verre:</label>
+              <input type="text" formControlName="natureVerre" class="form-control" id="natureVerre">
+            </div>
+            <div *ngIf="
+              rapportForm.get('natureVerre')?.hasError('required') &&
+              rapportForm.get('natureVerre')?.touched
+            " class="text-danger">
+              nature verre est obligatoire
+            </div>
+
+          </div>
+
+          <div class="d-flex justify-content-end pt-3">
+            <button type="submit" class="btn  btn-primary  btn-lg ms-2" [disabled]="rapportForm.invalid">
+              Submit
+            </button>
+            <button type="button" class="btn btn-warning btn-lg ms-2" (click)="onrest()">
+              Reset
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

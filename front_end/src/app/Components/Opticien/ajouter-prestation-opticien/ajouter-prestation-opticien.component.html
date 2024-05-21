@@ -1,0 +1,229 @@
+<div class="container">
+    <div class="card">
+      <h2 class="card-header text-center">Ajouter prestation</h2>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="statusFilter" class="form-label">Chercher par matricule d'adhérent :</label>
+            <div class="input-group mb-3">
+              <select id="assuranceNom" class="form-select" [(ngModel)]="assuranceNom">
+                <option value="" selected disabled>Sélectionnez une assurance</option>
+                <option *ngFor="let assuranceName of assuranceNames" [value]="assuranceName">{{ assuranceName }}</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" [(ngModel)]="matricule" class="form-control" placeholder="Matricule de l'adhérent...">
+            </div>
+            <button class="btn btn-primary" (click)="searchAdherant()">Search</button>
+
+          </div>
+        </div>
+
+        <div class="row" *ngIf="searchPerformed">
+          <div class="col-md-4">
+            <div class="container mt-4">
+              <div>
+                <h2 class="card-header text-center">
+                  <i class="fas fa-user"></i> Données Adhérent
+                </h2>
+                <table class="table align-middle mb-0 bg-white">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Nom</th>
+                      <td>{{ adherant?.nom }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Prénom</th>
+                      <td>{{ adherant?.prenom }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">CIN</th>
+                      <td>{{ adherant?.cin }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Matricule</th>
+                      <td>{{ adherant?.matricule }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Sexe</th>
+                      <td>{{ adherant?.sexe }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Date de Naissance</th>
+                      <td>{{ adherant?.dateNais  }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Gouvernorat de Naissance</th>
+                      <td>{{ adherant?.gouvNais }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Pays de Naissance</th>
+                      <td>{{ adherant?.paysNais }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Plafond</th>
+                      <td>{{ adherant?.plafond | number}} DT</td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" class="text-center" *ngIf="adherant">
+                        <button mat-raised-button color="primary" (click)="openAjoutPrestationOptiqueDialog(false,adherant?.id)">Ajouter prestation</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- Second Column - Beneficiaire or Prestation History -->
+          <div class="col-md-8">
+            <div class="container mt-4">
+              <h2 class="card-header text-center">
+                <i class="fa-solid fa-bars"></i> Données Beneficaires
+              </h2>
+              <div class="mb-3">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped align-middle">
+                    <thead class="bg-light">
+                      <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Qualité</th>
+                        <th>Date de Naissance</th>
+                        <th>Sexe</th>
+                        <th>Plafond</th>
+                        <th>Ajouter prestation</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngIf="adherant?.beneficiaires && adherant?.beneficiaires.length > 0; else noBeneficiaries">
+                        <tr *ngFor="let beneficiaire of adherant?.beneficiaires; let i=index">
+                          <td>{{ beneficiaire.nom }}</td>
+                          <td>{{ beneficiaire.prenom }}</td>
+                          <td>{{ beneficiaire.qualite }}</td>
+                          <td>{{ beneficiaire.dateNais  }}</td>
+                          <td>{{ beneficiaire.sexe }}</td>
+                          <td>{{ beneficiaire.plafond }}</td>
+                          <td>
+                            <button mat-raised-button color="primary" (click)="openAjoutPrestationOptiqueDialog(true,i)">Ajouter </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                      <ng-template #noBeneficiaries>
+                        <tr>
+                          <td colspan="7" class="text-center">Pas de bénéficiaires</td>
+                        </tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="container mt-4">
+              <h2 class="card-header text-center">
+                <i class="fa-solid fa-bars"></i> Historique des prestations
+              </h2>
+
+              <div class="row mt-3">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="startDate">Date de début :</label>
+                    <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="endDate">Date de fin :</label>
+                    <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="filterButton" class="invisible">Filtrer</label>
+                    <button class="btn btn-primary w-100 mt-2" id="filterButton" (click)="filterByDate()">Filtrer</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped align-middle">
+                    <thead class="bg-light">
+                      <tr>
+                        <th>Reference</th>
+                        <th>Matricule de l'assuré</th>
+                        <th>Nom de l'assuré</th>
+                        <th>Date de prestation</th>
+                        <th>Montant total</th>
+                        <th>Montant remboursable</th>
+                        <th>Type de prestation</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngIf="filteredPrestations.length > 0; else noData">
+                        <tr *ngFor="let prestation of filteredPrestations">
+                          <td>{{ prestation.ref }}</td>
+                          <td>{{ prestation.adherant.matricule }}</td>
+                          <td>{{ prestation.adherant.assurance.nom }}</td>
+                          <td>{{ prestation.dateCreation  }}</td>
+                          <td>{{ prestation.montantTotal }}</td>
+                          <td>{{ prestation.montantRembourse }}</td>
+                          <td>{{ prestation.type }}</td>
+                          <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#voirdetails" (click)="showDetails(prestation)">
+                              Voir détails prestation
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                      <ng-template #noData>
+                        <tr>
+                          <td colspan="8" class="text-center">Veuillez d'abord filtrer</td>
+                        </tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <div class="modal fade" id="voirdetails" tabindex="-1" aria-labelledby="voirdetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="voirdetailsLabel">Détails de la prestation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedPrestation">
+            <p>Numéro transaction : {{ selectedPrestation.ref }}</p>
+            <p>Matricule de l'assuré : {{ selectedPrestation.adherant.matricule }}</p>
+            <p>Nom de l'assuré : {{ selectedPrestation.adherant.nom }}</p>
+            <p>Prenom de l'assuré : {{ selectedPrestation.adherant.prenom }}</p>
+            <p>Montant total : {{ selectedPrestation.montantTotal }}</p>
+            <p>Montant remboursé : {{ selectedPrestation.montantRembourse }}</p>
+
+            <div *ngIf="beneficiaire">
+              <p>Bénéficiare : {{ beneficiaire.nom }} {{ beneficiaire.prenom }}</p>
+              <p>Sexe : {{ beneficiaire.sexe }}</p>
+              <p>Qualité: {{ beneficiaire.qualite }}</p>
+              <p>Plafond: {{ beneficiaire.plafond }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>

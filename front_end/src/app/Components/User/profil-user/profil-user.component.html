@@ -1,0 +1,127 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card mt-4">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">
+          <i class="fas fa-user"></i> Données user
+        </h2>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th scope="row" class="table-primary">Email</th>
+              <td>{{user.email}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Nom</th>
+              <td>{{user.nom}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Prénom</th>
+              <td>{{user.prenom}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Matricule</th>
+              <td>{{user.matricule}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Identité bancaire</th>
+              <td>{{user.identiteBancaire}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Téléphone</th>
+              <td>{{user.tel}}</td>
+            </tr>
+            <tr>
+              <th scope="row" class="table-primary">Adresse</th>
+              <td>{{user.adresse}}</td>
+            </tr>
+
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserProfileModal">
+          Modifier
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add information  Modal -->
+<div class="modal fade" id="editUserProfileModal" tabindex="-1" aria-labelledby="editUserProfileModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserProfileModalLabel">Modifier les informations du profil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="profilForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="nom" name="nom" formControlName="nom" placeholder="Nom">
+            <div *ngIf="profilForm.get('nom')?.hasError('required') && profilForm.get('nom')?.touched"
+              class="text-danger">
+              Nom is obligatoire
+            </div>
+            <div *ngIf="profilForm.get('nom')?.hasError('pattern') && profilForm.get('nom')?.touched"
+              class="text-danger">
+              Nom doint conntient seulement des lettre
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="prenom" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="prenom" name="prenom" formControlName="prenom"
+              placeholder="Prenom">
+            <div *ngIf="profilForm.get('prenom')?.hasError('required') && profilForm.get('prenom')?.touched"
+              class="text-danger">
+              Prénom is required
+            </div>
+            <div *ngIf="profilForm.get('prenom')?.hasError('pattern') && profilForm.get('prenom')?.touched"
+              class="text-danger">
+              prenom doint contient seulement des lettre
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="adresse" class="form-label">Adresse</label>
+            <input type="text" class="form-control" id="adresse" name="adresse" formControlName="adresse"
+              placeholder="adresse">
+            <div *ngIf="profilForm.get('adresse')?.hasError('required') && profilForm.get('adresse')?.touched"
+              class="text-danger">
+              Prénom is required
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="identiteBancaire" class="form-label">Identité bancaire</label>
+            <input type="text" class="form-control" id="identiteBancaire" name="identiteBancaire"
+              formControlName="identiteBancaire" placeholder="identiteBancaire">
+            <div
+              *ngIf="profilForm.get('identiteBancaire')?.hasError('required') && profilForm.get('identiteBancaire')?.touched"
+              class="text-danger">
+              identité bancaire is required
+            </div>
+
+          </div>
+          <div class="mb-3">
+            <label for="tel" class="form-label">Téléphone</label>
+            <input type="tel" class="form-control" id="tel" name="tel" formControlName="tel" placeholder="tel">
+            <div *ngIf="profilForm.get('tel')?.hasError('required') && profilForm.get('tel')?.touched"
+              class="text-danger">
+              téléphone is required
+            </div>
+            <div *ngIf="profilForm.get('tel')?.hasError('pattern') && profilForm.get('tel')?.touched"
+              class="text-danger">
+              téléphone doint contient seulement des nombres
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" [disabled]="profilForm.invalid"
+              data-bs-dismiss="modal">Enregistrer</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

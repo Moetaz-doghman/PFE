@@ -1,0 +1,198 @@
+<div class="container">
+    <div class="card">
+      <div class="col-md-12">
+        <div class="container mt-4">
+          <div class="custom-navbar">
+            <button class="btn btn-primary btn-rounded-rectangle-rounded-right " type="button"
+            id="ordonnanceNonFacture" routerLink="/menu/optc/prestationNonFactrureOC">Ordonnance non facturée</button>
+            <button class="btn btn-primary btn-rounded-rectangle-rounded-right active" type="button" id="bordereauFacture"
+            routerLink="/menu/optc/bordoreauxFactOC">Bordereau de facture</button>
+          </div>
+          <div class="navbar-line"></div>
+  
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="border border-secondary p-3 rounded">
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    <label for="startDate">Date de début :</label>
+                    <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate" />
+                  </div>
+                  <div class="form-group col-md-12">
+                    <label for="endDate" class="mt-2">Date de fin :</label>
+                    <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-12 d-flex justify-content-end">
+                    <button class="btn btn-primary" id="filterButton" id="filterButton"
+                      (click)="filterByDate()">Filtrer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="mt-5">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle" id="pdfTable">
+              <thead class="bg-light">
+                <tr>
+                  <th>Reference</th>
+                  <th>numéro de facture</th>
+                  <th>Date de création</th>
+                  <th>Nombre de prestations</th>
+                  <th>Montant total</th>
+                  <th>Montant remboursable</th>
+                  <th>Montant ticket modérateur</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="!filterApplied">
+                  <tr>
+                    <td colspan="8" class="text-center">
+                      Veuillez d'abord filtrer.
+                    </td>
+                  </tr>
+                </ng-container>
+  
+                <ng-container *ngIf="filterApplied && filteredBordereaux.length === 0">
+                  <tr>
+                    <td colspan="8" class="text-center">
+                      <ng-container *ngIf="endDate">
+                        Aucun bordereau trouvé pour la période du {{ startDate | date }} au {{ endDate | date }}.
+                      </ng-container>
+                      <ng-container *ngIf="!endDate">
+                        Aucun bordereau trouvé pour la période du {{ startDate | date }} au {{ today | date }}.
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container *ngIf="filteredBordereaux.length > 0">
+                  <tr *ngFor="let bord of dataSource.data">
+                    <td>{{ bord.refNumber}}</td>
+                    <td>{{ bord.numFacture}}</td>
+                    <td>{{ bord.dateCreationF | date}}</td>
+                    <td>{{ bord.nbPrestation}}</td>
+                    <td>{{ bord.montant_total}}</td>
+                    <td>{{ bord.montant_total_Remboursable}}</td>
+                    <td>{{ bord.montant_ticket_moderateur}}</td>
+                    <td>{{ bord.status}}</td>
+                    <td>
+                      <button mat-icon-button *ngIf="!downloadingPDF" (click)="downloadPDF(bord)"
+                        [disabled]="downloadingPDF">
+                        <mat-icon>get_app</mat-icon>
+                        <canvas #qrCanvas style="display: none;"></canvas>
+                      </button>
+                      <div *ngIf="downloadingPDF" class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+  
+              </tbody>
+            </table>
+            <div class="form-group col-md-12 d-flex justify-content-end">
+              <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)" [pageIndex]="currentPage" [showFirstLastButtons]="true"></mat-paginator>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  
+  <div class="container" id="pdfSection" [style.display]="showSecondContainer ? 'block' : 'none'">
+    <div class="card">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand mr-auto" href="#">
+          <img src="assets/images/logo.png" width="100" height="50" class="d-inline-block align-top" alt="">
+        </a>
+        <span class="navbar-text mx-auto mx-3">
+          <h2>Bordereau</h2>
+        </span>
+        <span class="navbar-text ml-auto mx-3">
+          <h5>{{ today | date: 'dd/MM/yyyy' }}</h5>
+        </span>
+      </nav>
+      <div class="row">
+        <div class="col-md-8">
+          <div *ngIf="bordereauSelectionne" class="container mt-4">
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Reference:</strong> {{ bordereauSelectionne.refNumber }}</div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Numéro de facture:</strong> {{ bordereauSelectionne.numFacture }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Date de création:</strong> {{ bordereauSelectionne.dateCreationF |
+                date }}</div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Montant total:</strong> {{ bordereauSelectionne.montant_total }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Montant remboursable:</strong> {{
+                bordereauSelectionne.montant_total_Remboursable }}</div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-left"><strong>Montant ticket modérateur:</strong> {{
+                bordereauSelectionne.montant_ticket_moderateur }}</div>
+            </div>
+          </div>
+        </div>
+  
+        <div *ngIf="donneesAdherent" class="col-md-12">
+          <div class="container mt-4">
+            <div class="row">
+              <div class="col-md-12">
+                <h4 class="border-bottom pb-2"><strong>Données de(s) prestation(s) </strong></h4>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead class="bg-light">
+                  <tr>
+                    <th>Nom de l'assuré</th>
+                    <th>Matricule de l'assuré</th>
+                    <th>Médecin</th>
+                    <th>Email médecin</th>
+                    <th>Réf préstation</th>
+                    <th>Date préstation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of donneesAdherent">
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-12">
+          <div class="container mt-4 d-flex justify-content-center">
+            <div>
+              <img *ngIf="qrCodeURL" [src]="qrCodeURL" alt="QR Code" class="img-fluid">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
