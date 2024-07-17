@@ -31,7 +31,7 @@ export class AuthServiceService {
         password,
       },
       httpOptions
-      
+
     );
   }
 
@@ -51,6 +51,133 @@ export class AuthServiceService {
     return this.http.post(AUTH_API + 'signout', { }, httpOptions);
   }
 
+  IsLoggedIn(){
+    return localStorage.getItem('auth-user')!=null;
+  }
+  GetToken(){
+   return localStorage.getItem('auth-user')||'';
+  }
+  HaveAccess(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_ADMIN"){
+      return true
+    }else{
+      alert('you not having access');
+      return false
+    }
+  }
+  HaveAccessOpt(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_OPTICIEN"){
+      return true
+    }else{
+      alert('you not having access');
+      return false
+    }
+  }
+
+  HaveAccessOpt1(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_OPTICIEN"){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  HaveAccessDent(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_DENTIST"){
+      return true
+    }else{
+      alert('you not having access');
+      return false
+    }
+  }
+
+  HaveAccessDent1(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_DENTIST"){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  HaveAccessDentC(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_DENTIST_CONTROLEUR"){
+      return true
+    }else{
+      alert('you not having access');
+      return false
+    }
+  }
+
+  HaveAccessDentC1(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_DENTIST_CONTROLEUR"){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  HaveAccessOptC(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_OPTICIEN_CONTROLEUR"){
+      return true
+    }else{
+      alert('you not having access');
+      return false
+    }
+  }
+
+  HaveAccessOptC1(){
+    var loggintoken=localStorage.getItem('auth-user')||'';
+    var _extractedtoken=loggintoken.split('.')[1];
+    var _atobdata=atob(_extractedtoken);
+    var _finaldata=JSON.parse(_atobdata);
+    console.log(_finaldata);
+    if(_finaldata.roles=="ROLE_OPTICIEN_CONTROLEUR"){
+      return true
+    }else{
+      return false
+    }
+  }
+
   private checkLoggedIn() {
     this.isLoggedIn = this.storageService.isLoggedIn();
     if (this.isLoggedIn) {
@@ -59,7 +186,7 @@ export class AuthServiceService {
     }
   }
 
-  isAdmin(): boolean {
+   isAdmin(): boolean {
     return this.roles.includes('ROLE_ADMIN');
   }
 
@@ -78,5 +205,7 @@ export class AuthServiceService {
   isDentistControleur(): boolean {
     return this.roles.includes('ROLE_DENTIST_CONTROLEUR');
   }
+
+
 }
 

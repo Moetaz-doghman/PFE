@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import * as $ from 'jquery';
 import * as qrcode from 'qrcode';
+import { StorageServiceService } from 'src/app/Services/storage-service.service';
 
 @Component({
   selector: 'app-historique',
@@ -27,13 +28,11 @@ export class HistoriqueComponent implements OnInit {
   qrCodeURL: string | null = null;
   filterDate: string = '';
 
-
-
-
   constructor(
     private rapportService: RapportDentisteCVService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private storageService: StorageServiceService
   ) {}
 
   ngOnInit(): void {
@@ -41,20 +40,22 @@ export class HistoriqueComponent implements OnInit {
   }
 
   getCombinedRapports(): void {
-    this.rapportService.getCombinedRapports().subscribe(
-      (data) => {
-        this.combinedRapports = data.map(rapport => ({
-          ...rapport,
-          isDownloading: false // Ajouter l'état de téléchargement
-        }));
-        console.log(this.combinedRapports)
-        this.totalItems = this.combinedRapports.length;
-        this.dataSource.data = this.combinedRapports;
-      },
-      (error) => {
-        console.error('Error fetching combined rapports:', error);
-      }
-    );
+    this.rapportService
+      .getCombinedRapports(this.storageService.getUser().id)
+      .subscribe(
+        (data) => {
+          this.combinedRapports = data.map((rapport) => ({
+            ...rapport,
+            isDownloading: false,
+          }));
+          console.log(this.combinedRapports);
+          this.totalItems = this.combinedRapports.length;
+          this.dataSource.data = this.combinedRapports;
+        },
+        (error) => {
+          console.error('Error fetching combined rapports:', error);
+        }
+      );
   }
 
   onPageChange(event: PageEvent): void {
@@ -96,11 +97,18 @@ export class HistoriqueComponent implements OnInit {
             const contentDataURL = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const position = 0;
-            pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+            pdf.addImage(
+              contentDataURL,
+              'PNG',
+              0,
+              position,
+              imgWidth,
+              imgHeight
+            );
             pdf.save('RapportDeContreVisite.pdf');
 
-            rapport.isDownloading = false; // Fin du téléchargement pour ce rapport
-            this.selectedRapport = null; // Fermer la section après téléchargement
+            rapport.isDownloading = false; 
+            this.selectedRapport = null; 
           });
         }
       }, 1000);
@@ -139,7 +147,7 @@ export class HistoriqueComponent implements OnInit {
         } else {
           console.log(`Element not found for tooth: ${tooth}`);
         }
-      }, 100); // Vérifie toutes les 100ms
+      }, 100);
     });
   }
 
@@ -156,7 +164,4 @@ export class HistoriqueComponent implements OnInit {
       });
     });
   }
-
-
-
 }

@@ -5,6 +5,7 @@ import { ReclamationService } from 'src/app/Services/reclamation.service';
 import { StorageServiceService } from 'src/app/Services/storage-service.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Reclamation } from 'src/app/Models/Reclamation';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reclamation',
@@ -21,7 +22,8 @@ export class ReclamationComponent {
   constructor(
     private fb: FormBuilder,
     private reclamationService: ReclamationService,
-    private strogeService: StorageServiceService
+    private strogeService: StorageServiceService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -33,32 +35,6 @@ export class ReclamationComponent {
     this.getReclamationsByCurrentUser();
   }
 
-
-  onSubmit(): void {
-    if (this.reclamationForm.invalid) {
-      return;
-    }
-
-    const newReclamation: Reclamation = {
-      id: null, // L'ID sera généré automatiquement côté serveur
-      titre: this.reclamationForm.get('titre').value,
-      description: this.reclamationForm.get('description').value,
-      dateCreation: null,
-      statut: null, // Initial status can be set here if needed
-      user: null // User will be set on the server-side
-    };
-
-    const userId = this.strogeService.getUser().id;
-
-    this.reclamationService.createReclamation(newReclamation, userId)
-      .subscribe(createdReclamation => {
-        console.log('Réclamation créée avec succès :', createdReclamation);
-        this.getReclamationsByCurrentUser();
-        this.reclamationForm.reset();
-      });
-  }
-
-  
   confirmDelete(reclamation: Reclamation): void {
     this.selectedReclamation = reclamation;
   }
@@ -79,5 +55,9 @@ export class ReclamationComponent {
       .subscribe(reclamations => {
         this.reclamations = reclamations;
       });
+  }
+
+  goToAdd(){
+    this.router.navigate(['menu/ajouterReclamation']);
   }
 }

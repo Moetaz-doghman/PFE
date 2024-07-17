@@ -1,0 +1,115 @@
+/* Styling for the table */
+
+
+.table {
+  border: 2px solid #ccc;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.table th {
+  background-color: #f2f2f2;
+}
+
+/* Styling for paragraphs */
+p {
+  color: black;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #333;
+  font-size: 30px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* Additional styling */
+.container {
+  padding: 20px;
+}
+
+.card {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.navbar-brand img {
+  border-radius: 5px;
+}
+
+.navbar-text h2 {
+  margin: 0;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 6px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
+
+.info-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-section > div {
+  flex: 1;
+}
+
+.optician-section {
+  margin-top: 120px;
+  padding-top: 120px;
+
+  text-align: right;
+}
+
+.optician-section p {
+  color: #000; /* Black text color */
+}
+
+.h2 {
+  font-size: 50px;
+
+}
+
+
+/* Custom CSS to improve the design */
+#pdfSection {
+margin-top: 20px; /* Adjust the top margin as needed */
+}
+
+.font-size-12 {
+font-size: 16px; /* Set the font size to 12px */
+}
+
+.optician-section {
+margin-top: 30px; /* Adjust the top margin as needed */
+}
+
+

@@ -100,6 +100,12 @@ export class UserServiceService {
     return this.http.put<User>(`${this.apiUrl}/${userId}`, updatedUser, { headers });
   }
 
+  changePassword(userId: number, changePasswordRequest: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${userId}/change-password`, changePasswordRequest);
+  }
+
+
+
 
 
 

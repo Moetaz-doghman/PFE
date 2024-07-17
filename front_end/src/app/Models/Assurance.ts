@@ -6,4 +6,6 @@ export interface Assurance {
   prixCotation: number;
   adherants: Adherant[];
   prix_cotation : number;
+  prix_cotationODF: number;
+  prix_cotationProthese: number;
 }

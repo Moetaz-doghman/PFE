@@ -1,0 +1,56 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title text-center mb-4">Liste des assurances</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Prix Cotation Soins Dentaires</th>
+            <th scope="col">Prix Cotation ODF</th>
+            <th scope="col">Prix Cotation Prothèse</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let assurance of assurances">
+            <td>{{ assurance.nom }}</td>
+            <td>{{ assurance.prix_cotation }}</td>
+            <td>{{ assurance.prix_cotationODF }}</td>
+            <td>{{ assurance.prix_cotationProthese }}</td>
+            <td>
+              <button class="btn btn-danger" (click)="confirmDelete(assurance)" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="btn btn-success" (click)="updateAssuranceDetails(assurance.id)">
+                <i class="fa fa-pencil-square"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="btn btn-success" (click)="addAssurance()">
+      <i class="fas fa-plus"></i> Ajouter Assurance
+    </button>
+  </div>
+</div>
+
+<!-- Modèle de confirmation de suppression -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmer la suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer cette assurance ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="deleteAssurance()" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -15,7 +15,6 @@
               <input type="text" [(ngModel)]="matricule" class="form-control" placeholder="Matricule de l'adhérent...">
             </div>
             <button class="btn btn-primary" (click)="searchAdherant()">Search</button>
-
           </div>
         </div>
 
@@ -29,39 +28,39 @@
                 <table class="table align-middle mb-0 bg-white">
                   <tbody>
                     <tr>
-                      <th scope="row">Nom</th>
+                      <th scope="row" style="text-align: left;">Nom</th>
                       <td>{{ adherant?.nom }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Prénom</th>
+                      <th scope="row" style="text-align: left;">Prénom</th>
                       <td>{{ adherant?.prenom }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">CIN</th>
+                      <th scope="row" style="text-align: left;">CIN</th>
                       <td>{{ adherant?.cin }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Matricule</th>
+                      <th scope="row" style="text-align: left;">Matricule</th>
                       <td>{{ adherant?.matricule }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Sexe</th>
+                      <th scope="row" style="text-align: left;">Sexe</th>
                       <td>{{ adherant?.sexe }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Date de Naissance</th>
+                      <th scope="row" style="text-align: left;">Date de Naissance</th>
                       <td>{{ adherant?.dateNais  }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Gouvernorat de Naissance</th>
+                      <th scope="row" style="text-align: left;">Gouvernorat de Naissance</th>
                       <td>{{ adherant?.gouvNais }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Pays de Naissance</th>
+                      <th scope="row" style="text-align: left;">Pays de Naissance</th>
                       <td>{{ adherant?.paysNais }}</td>
                     </tr>
                     <tr>
-                      <th scope="row">Plafond</th>
+                      <th scope="row" style="text-align: left;">Plafond</th>
                       <td>{{ adherant?.plafond | number}} DT</td>
                     </tr>
                     <tr>
@@ -125,30 +124,6 @@
               <h2 class="card-header text-center">
                 <i class="fa-solid fa-bars"></i> Historique des prestations
               </h2>
-
-              <div class="row mt-3">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="startDate">Date de début :</label>
-                    <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="endDate">Date de fin :</label>
-                    <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="filterButton" class="invisible">Filtrer</label>
-                    <button class="btn btn-primary w-100 mt-2" id="filterButton" (click)="filterByDate()">Filtrer</button>
-                  </div>
-                </div>
-              </div>
-
               <div class="mb-3">
                 <div class="table-responsive">
                   <table class="table table-bordered table-striped align-middle">
@@ -161,21 +136,25 @@
                         <th>Montant total</th>
                         <th>Montant remboursable</th>
                         <th>Type de prestation</th>
+                        <th>Qualité</th>
                         <th>Details</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <ng-container *ngIf="filteredPrestations.length > 0; else noData">
-                        <tr *ngFor="let prestation of filteredPrestations">
+                      <ng-container *ngIf="prestations.length > 0; else noData">
+                        <tr *ngFor="let prestation of prestations">
                           <td>{{ prestation.ref }}</td>
                           <td>{{ prestation.adherant.matricule }}</td>
-                          <td>{{ prestation.adherant.assurance.nom }}</td>
+                          <td>{{ prestation.adherant.nom }}</td>
                           <td>{{ prestation.dateCreation  }}</td>
                           <td>{{ prestation.montantTotal }}</td>
                           <td>{{ prestation.montantRembourse }}</td>
                           <td>{{ prestation.type }}</td>
+                          <td *ngIf="prestation.beneficiaireId == null">Prestation pour adhenrant</td>
+                          <td *ngIf="prestation.beneficiaireId != null">Prestation pour benefiçaire</td>
                           <td>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#voirdetails" (click)="showDetails(prestation)">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                              data-bs-target="#voirdetails" (click)="showDetails(prestation)">
                               Voir détails prestation
                             </button>
                           </td>
@@ -183,7 +162,7 @@
                       </ng-container>
                       <ng-template #noData>
                         <tr>
-                          <td colspan="8" class="text-center">Veuillez d'abord filtrer</td>
+                          <td colspan="8" class="text-center">Pas de prestations</td>
                         </tr>
                       </ng-template>
                     </tbody>
@@ -218,6 +197,16 @@
               <p>Sexe : {{ beneficiaire.sexe }}</p>
               <p>Qualité: {{ beneficiaire.qualite }}</p>
               <p>Plafond: {{ beneficiaire.plafond }}</p>
+            </div>
+
+            <div *ngIf="selectedPrestation">
+              <p>axe doite : {{ selectedPrestation.axeD }}</p>
+              <p>axe gauche : {{ selectedPrestation.montantRembourse }}</p>
+              <p>sphére doite : {{ selectedPrestation.sphereD }}</p>
+              <p>sphére gauche : {{ selectedPrestation.sphereG }}</p>
+              <p>valeur monture : {{ selectedPrestation.valeurMonture }}</p>
+              <p>valeur verre droite : {{ selectedPrestation.valeurVerreOeilDroit }}</p>
+              <p>valeur verre gauche : {{ selectedPrestation.valeurVerreOeilGauche }}</p>
             </div>
           </div>
         </div>

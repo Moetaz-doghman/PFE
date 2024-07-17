@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { EReclamationStatus } from 'src/app/Models/EReclamationStatus';
 import { Reclamation } from 'src/app/Models/Reclamation';
 import { ReclamationService } from 'src/app/Services/reclamation.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-liste-reclamation',
@@ -15,6 +17,9 @@ export class ListReclamationComponent implements OnInit {
   selectedReclamation: Reclamation | null = null;
   statusForm: FormGroup;
   statusList = Object.values(EReclamationStatus);
+
+  @ViewChild('updateStatusModal') updateStatusModal: ElementRef;
+  @ViewChild('viewReclamationModal') viewReclamationModal: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -46,6 +51,14 @@ export class ListReclamationComponent implements OnInit {
           console.log('Statut mis à jour avec succès :', updatedReclamation);
           this.getReclamations();
           this.selectedReclamation = null;
+          this.statusForm.reset();
+          window.location.reload()
+        const modalElement = this.updateStatusModal.nativeElement;
+        console.log('Modal element:', modalElement); 
+        const modalInstance = new bootstrap.Modal(modalElement);
+        console.log('Modal instance:', modalInstance); 
+        modalInstance.hide();
+
         });
     }
   }

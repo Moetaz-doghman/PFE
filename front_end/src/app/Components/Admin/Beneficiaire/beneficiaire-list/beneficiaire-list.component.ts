@@ -10,7 +10,9 @@ import { BeneficiaireService } from 'src/app/Services/beneficiaire.service';
 })
 export class BeneficiaireListComponent implements OnInit {
   beneficiaires: Beneficiaire[] = [];
+  filteredBeneficiaires: Beneficiaire[] = [];
   selectedBeneficiaire: Beneficiaire | null = null;
+  searchQuery: string = '';
 
   constructor(
     private beneficiaireService: BeneficiaireService,
@@ -25,6 +27,7 @@ export class BeneficiaireListComponent implements OnInit {
     this.beneficiaireService.getAllBeneficiaires().subscribe(
       (data: Beneficiaire[]) => {
         this.beneficiaires = data;
+        this.filteredBeneficiaires = data;
         console.log(data);
       },
       (error: any) => {
@@ -56,8 +59,17 @@ export class BeneficiaireListComponent implements OnInit {
     this.router.navigate(['menu/admin/modifierBeneficiaire', prestationId]);
   }
 
-  addButton()
-  {
+  addButton(): void {
     this.router.navigate(['menu/admin/ajouterBeneficiaire']);
+  }
+
+  applyFilter(): void {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredBeneficiaires = this.beneficiaires.filter((beneficiaire) => {
+      return (
+        beneficiaire.nom.toLowerCase().includes(query) ||
+        beneficiaire.prenom.toLowerCase().includes(query)
+      );
+    });
   }
 }

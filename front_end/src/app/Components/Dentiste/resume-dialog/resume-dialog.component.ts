@@ -22,7 +22,7 @@ export class ResumeDialogComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // console.log(this.data.totalCotation)
+     console.log(this.data)
 
   }
 
@@ -38,8 +38,12 @@ export class ResumeDialogComponent implements OnInit {
   }
 
   validerPrestation(isBeneficiaire): void {
+    const assuranceNom = this.data.adherant.assurance.nom;
+    const matricule = this.data.adherant.matricule;
 
-    if(isBeneficiaire){
+    const totalCotation = this.data.totalCotation.trim() === '' ? 0 : this.data.totalCotation;
+
+    if (isBeneficiaire) {
       this.service.ajouterPrestationBenefPourDentiste(
         this.data.adherant.id,
         this.data.totalOrdonnance,
@@ -50,19 +54,18 @@ export class ResumeDialogComponent implements OnInit {
         this.getActesDentairesChoisis().replace(/\s+/g, ''),
         this.data.adherant.beneficiaires[0].id,
         this.storageService.getUser().id,
-        this.data.totalCotation
+        totalCotation
       ).subscribe(
         (response) => {
           this.openSnackBar('Requête réussie');
-           this.dialog.closeAll(); // Ferme tous les dialogs ouverts
-
+          localStorage.setItem('assuranceNom', assuranceNom);
+          localStorage.setItem('matricule', matricule);
+          window.location.reload();
         },
         (error) => {
           this.openSnackBar('Erreur lors de la requête');
-
         }
       );
-
     } else {
       this.service.ajouterPrestationPourDentiste(
         this.data.adherant.id,
@@ -73,21 +76,22 @@ export class ResumeDialogComponent implements OnInit {
         'D',
         this.getActesDentairesChoisis().replace(/\s+/g, ''),
         this.storageService.getUser().id,
-        this.data.totalCotation
+        totalCotation
       ).subscribe(
         (response) => {
           this.openSnackBar('Requête réussie');
-           this.dialog.closeAll(); // Ferme tous les dialogs ouverts
-
+          localStorage.setItem('assuranceNom', assuranceNom);
+          localStorage.setItem('matricule', matricule);
+          window.location.reload();
         },
         (error) => {
           this.openSnackBar('Erreur lors de la requête');
-
         }
       );
     }
-
   }
+
+
 
   openSnackBar(message: string): void {
     this._snackBar.open(message, 'Fermer', {

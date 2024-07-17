@@ -157,6 +157,10 @@ export class PrestationService {
     return this.http.get<Prestation[]>(`${this.baseUrl}/withActesAndBenef`);
   }
 
+  getPrestationsWithActesAndBenefAndTypeContreVisite(): Observable<Prestation[]> {
+    return this.http.get<Prestation[]>(`${this.baseUrl}/withActesAndBenefAndTypeContreVisite`);
+  }
+
   findAllWithActesAndContreVisite(userId: number): Observable<Prestation[]> {
     return this.http.get<Prestation[]>(`${this.baseUrl}/findAllWithActesAndContreVisite/${userId}`);
   }

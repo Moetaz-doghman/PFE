@@ -44,6 +44,8 @@
   <!-- Deuxième page -->
   <div *ngIf="showSecondPage" class="page-container">
     <div class="scrollable-content">
+     
+
 
       <form [formGroup]="optiqueForm" class="form-container">
         <h3 class="section-title">Date Consultation :</h3>
@@ -124,9 +126,12 @@
 
         <button mat-stroked-button class="calculate-button" (click)="calculer()">
           Calculer
-        </button>
+        </button> <br/>
+        <div *ngIf="plafondErrorMessage" class="error-message below-input">
+          {{ plafondErrorMessage }}
+        </div>
 
-        <div class="result-container">
+        <div *ngIf="showCalculation" class="result-container">
           <div class="result">
             <h3 class="section-title">Total ordonnance en TND :</h3>
             <mat-form-field class="input-field">

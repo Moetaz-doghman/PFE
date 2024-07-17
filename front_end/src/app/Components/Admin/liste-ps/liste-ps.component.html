@@ -12,7 +12,13 @@
         </span>
       </button>
     </div>
-
+    <div class="input-group mb-3">
+      <span class="input-group-text">
+        <i class="fas fa-search"></i>
+      </span>
+      <input type="text" class="form-control" placeholder="Rechercher par nom ou prénom ou matricule ou email" [(ngModel)]="searchQuery"
+        (keyup)="applyFilter()" />
+    </div>
     <!-- Table -->
     <div class="table-responsive">
       <table class="table table-bordered table-striped align-middle">
@@ -34,7 +40,8 @@
         </thead>
         <!-- Table body -->
         <tbody>
-          <ng-container *ngFor="let professionnel of dataSource.data">              <tr>
+          <ng-container *ngFor="let professionnel of dataSource.data">
+            <tr>
               <td>{{ professionnel.email }}</td>
               <td>{{ professionnel.matricule }}</td>
               <td>{{ professionnel.nom }}</td>
@@ -46,27 +53,30 @@
                 <ul class="list-unstyled">
                   <li *ngFor="let role of professionnel.roles">
                     <span class="badge" [ngClass]="getRoleBadgeClass(role.name)">{{ role.name }}
-                      <em (click)="supprimerRole(professionnel.id, role.name)" style="cursor: pointer;" class="fas fa-trash text-danger"></em>
+                      <em (click)="supprimerRole(professionnel.id, role.name)" style="cursor: pointer;"
+                        class="fas fa-trash text-danger"></em>
                     </span>
                   </li>
                 </ul>
-                <em class="fas fa-edit text-primary" style="cursor: pointer;" (click)="userIdToDelete = professionnel.id" data-bs-toggle="modal" data-bs-target="#staticedit"></em>
+                <em class="fas fa-edit text-primary" style="cursor: pointer;"
+                  (click)="userIdToDelete = professionnel.id" data-bs-toggle="modal" data-bs-target="#staticedit"></em>
               </td>
               <td class="text-center">
-                <span class="badge"
-                  [class.bg-success]="professionnel.active"
-                  [class.bg-danger]="!professionnel.active">
+                <span class="badge" [class.bg-success]="professionnel.active" [class.bg-danger]="!professionnel.active">
                   {{ professionnel.active ? 'Active' : 'Not Active' }}
                 </span>
               </td>
               <td>
                 <div class="form-check form-switch">
-                  <input type="checkbox" class="form-check-input" id="customSwitch{{ professionnel.id }}" [(ngModel)]="professionnel.active" (change)="onChangeSwitch(professionnel.id, !professionnel.active)">
+                  <input type="checkbox" class="form-check-input" id="customSwitch{{ professionnel.id }}"
+                    [(ngModel)]="professionnel.active"
+                    (change)="onChangeSwitch(professionnel.id, !professionnel.active)">
                   <label class="form-check-label" for="customSwitch{{ professionnel.id }}"></label>
                 </div>
               </td>
               <td class="cursor-pointer" style="cursor: pointer;">
-                <em (click)="userIdToDelete = professionnel.id" class="fas fa-trash text-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></em>
+                <em (click)="userIdToDelete = professionnel.id" class="fas fa-trash text-danger" data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"></em>
               </td>
             </tr>
           </ng-container>
@@ -74,19 +84,15 @@
       </table>
     </div>
     <!-- Pagination -->
-    <mat-paginator
-    [length]="500"
-      [pageSize]="5"
-      [pageSizeOptions]="pageSizeOptions"
-      (page)="onPageChange($event)"
-      [pageIndex]="currentPage"
-      [showFirstLastButtons]="true">
+    <mat-paginator [length]="500" [pageSize]="5" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)"
+      [pageIndex]="currentPage" [showFirstLastButtons]="true">
     </mat-paginator>
   </div>
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -94,7 +100,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Would you really want to delete this data?
+        voulez vous supprimer ce professionnel de santé
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link" (click)="userIdToDelete = -1" data-bs-dismiss="modal">
@@ -109,7 +115,8 @@
 </div>
 
 <!-- Add Role Modal -->
-<div class="modal fade" id="staticedit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticedit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

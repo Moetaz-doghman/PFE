@@ -78,7 +78,7 @@ export class DetailPrestationComponent implements OnInit {
 
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Fermer', {
-      duration: 3000, // Durée d'affichage du toast en millisecondes
+      duration: 3000, 
     });
   }
 }

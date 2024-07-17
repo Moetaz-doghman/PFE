@@ -7,16 +7,17 @@ import { AuthServiceService } from '../Services/auth-service.service';
 })
 export class OpticienGuard implements CanActivate {
 
-  constructor(private authService: AuthServiceService, private router: Router) {}
+  constructor(
+    private authService: AuthServiceService,
+    private router: Router
+  ) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean | UrlTree {
-    if (this.authService.isOpticien()) {
+  canActivate(): boolean {
+    if (this.authService.HaveAccessOpt()) {
       return true;
     } else {
-      window.location.reload();
-      return this.router.parseUrl('/login');
+      this.router.navigate(['']);
+      return false;
     }
   }
 }

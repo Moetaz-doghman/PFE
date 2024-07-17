@@ -32,26 +32,18 @@
                       <td>{{ prestation.montantTotal }}</td>
                       <td>{{ prestation.type }}</td>
                       <td>
-                        <button
-                          type="button"
-                          class="btn btn-primary btn-sm"
-                          data-bs-toggle="modal"
-                          data-bs-target="#voirdetails"
-                          (click)="showDetails(prestation)"
-                        >
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                          data-bs-target="#voirdetails" (click)="showDetails(prestation)">
                           Voir détails
                         </button>
                       </td>
                       <td>
                         <ng-container *ngIf="prestation.rapportcontreVisite">
-                         voir rapport
+                          voir rapport
 
                         </ng-container>
                         <ng-container *ngIf="!prestation.rapportcontreVisite">
-                          <button
-                            type="button"
-
-                          >
+                          <button type="button">
                             Ajouter rapport
                           </button>
                         </ng-container>
@@ -69,25 +61,14 @@
 </div>
 
 <!-- Modal pour afficher les détails -->
-<div
-  class="modal fade"
-  id="voirdetails"
-  tabindex="-1"
-  aria-labelledby="voirdetailsLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="voirdetails" tabindex="-1" aria-labelledby="voirdetailsLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="voirdetailsLabel">
           Détails de la prestation
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Affichage des détails de la prestation -->
@@ -110,10 +91,7 @@
             <!-- Display other beneficiary details -->
           </div>
           <div class="actes">
-            <span
-              class="badge bg-success acte-badge"
-              *ngFor="let acte of selectedPrestation.actes"
-            >
+            <span class="badge bg-success acte-badge" *ngFor="let acte of selectedPrestation.actes">
               {{ acte.nom }}
             </span>
           </div>
@@ -128,5 +106,3 @@
     </div>
   </div>
 </div>
-
-

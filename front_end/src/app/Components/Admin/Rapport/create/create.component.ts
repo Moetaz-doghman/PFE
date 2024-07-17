@@ -125,7 +125,6 @@ export class CreateComponent implements OnInit {
 
   updateCheckboxStates() {
     if (this.selectedPrestations.length === 0) {
-      // Si aucune prestation n'est sélectionnée, toutes les cases à cocher sont activées
       this.prestations.forEach(prestation => prestation.disabled = false);
     } else {
       const selectedBeneficiaireId = this.selectedPrestations[0].beneficiaire ? this.selectedPrestations[0].beneficiaire.id : null;
@@ -144,7 +143,6 @@ export class CreateComponent implements OnInit {
     }
   }
 
-
   onCheckboxChange(prestation: Prestation) {
     if (prestation.selected) {
       this.selectedPrestations.push(prestation);
@@ -153,9 +151,6 @@ export class CreateComponent implements OnInit {
     }
     this.updateCheckboxStates();
   }
-
-
-
 
   addReport(): void {
     this.dataSharingService.setSelectedPrestations(this.selectedPrestations);

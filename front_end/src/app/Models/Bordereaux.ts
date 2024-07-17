@@ -12,6 +12,12 @@ export interface Bordereaux {
   montant_ticket_moderateur: number;
   status: string;
   prestations: Prestation[];
+  type : EType;
+}
+
+export enum EType {
+  Ordinaire = 'Ordinaire',
+  Contre_visite = 'Contre_visite'
 }
 
 

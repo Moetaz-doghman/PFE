@@ -21,19 +21,7 @@ export class ListNomenclatureComponent implements OnInit {
     this.loadNomenclatures();
   }
 
-    removeCircularReferences = (obj: any, seen: any[] = []) => {
-      return JSON.parse(
-        JSON.stringify(obj, (key, value) => {
-          if (typeof value === "object" && value !== null) {
-            if (seen.includes(value)) {
-              return; // Skip circular references
-            }
-            seen.push(value);
-          }
-          return value;
-        })
-      );
-    };
+    
 
   loadNomenclatures(): void {
     this.nomenclatureService.getAllNomenclatures().subscribe(

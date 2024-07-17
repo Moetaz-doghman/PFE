@@ -17,29 +17,42 @@ export class LoginComponent implements OnInit {
   isLoginFailed = false;
   errorMessage = '';
   roles: string[] = [];
-  errorMessage1 = 'adresse ou mot de passe incorrect';
-  constructor(private authService: AuthServiceService, private storageService: StorageServiceService, private route: Router) { }
+  errorMessage1: string | null = null;
+
+  constructor(private authService: AuthServiceService, private storageService: StorageServiceService, private router: Router) { }
+
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
       this.roles = this.storageService.getUser().roles;
     }
   }
+
   onSubmit(): void {
     const { email, password } = this.form;
     this.authService.login(email, password).subscribe({
       next: data => {
         this.storageService.saveUser(data);
-        this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.roles = this.storageService.getUser().roles;
-        this.route.navigate(['/menu']);
-
+        this.router.navigate(['/menu/home']);
       },
       error: err => {
         this.isLoginFailed = true;
-        this.errorMessage1 = 'adresse ou mot de passe incorrect';
-        this.errorMessage = err.error.message;
+        if (err.status === 401) {
+          if (err.error.message === 'Bad credentials' || err.error.message === "Cannot invoke \"com.example.projectPfe.models.Utilisateur.getRoles()\" because \"user\" is null") {
+            this.errorMessage = "Adresse ou mot de passe incorrect";
+          } else {
+            this.errorMessage = 'Erreur de connexion ';
+          }
+        } else if ( err.status === 400){
+          if (err.error.message === 'NotActive') {
+            this.errorMessage = 'Votre compte n est pas actif';
+          }
+        }
+         else {
+          this.errorMessage = 'Erreur de connexion ';
+        }
       }
     });
   }
@@ -48,6 +61,3 @@ export class LoginComponent implements OnInit {
     window.location.reload();
   }
 }
-
-
-

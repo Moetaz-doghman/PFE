@@ -9,7 +9,7 @@
       <ng-container *ngIf="data.isBeneficiaire">
         <div class="summary-item">
           <span>Bénéficiaire :</span>
-          <span>{{ data.adherant.beneficiaires[0].nom }} {{ data.adherant.beneficiaires[0].prenom }} </span>
+          <span>{{ data.adherant.beneficiaires[data.selectedBeneficiaireIndex].nom }} {{ data.adherant.beneficiaires[data.selectedBeneficiaireIndex].prenom }} </span>
         </div>
       </ng-container>
       <div class="summary-item">

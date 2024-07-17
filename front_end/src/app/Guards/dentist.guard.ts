@@ -7,15 +7,17 @@ import { Injectable } from '@angular/core';
 })
 export class DentistGuard implements CanActivate {
 
-  constructor(private authService: AuthServiceService, private router: Router) {}
+  constructor(
+    private authService: AuthServiceService,
+    private router: Router
+  ) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean | UrlTree {
-    if (this.authService.isDentist()) {
+  canActivate(): boolean {
+    if (this.authService.HaveAccessDent()) {
       return true;
     } else {
-      return this.router.parseUrl('/login');
+      this.router.navigate(['']);
+      return false;
     }
   }
 }

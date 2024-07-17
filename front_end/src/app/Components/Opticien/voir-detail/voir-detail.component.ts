@@ -23,7 +23,6 @@ export class VoirDetailComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // console.log(this.data.totalCotation)
 
   }
 
@@ -31,9 +30,12 @@ export class VoirDetailComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  
+
 
   validerPrestation(isBeneficiaire): void {
+    const assuranceNom = this.data.adherant.assurance.nom;
+    const matricule = this.data.adherant.matricule;
+
     if(isBeneficiaire){
       this.service.ajouterPrestationBenPourOpticien(
         this.data.adherant.id,
@@ -48,12 +50,13 @@ export class VoirDetailComponent implements OnInit {
       this.data.valeurVerreOeilGauche,
       this.data.valeurVerreOeilDroit,
       this.data.valeurMonture,
-        
+
       ).subscribe(
         (response) => {
           this.openSnackBar('Requête réussie');
-           this.dialog.closeAll(); // Ferme tous les dialogs ouverts
-
+          localStorage.setItem('assuranceNom', assuranceNom);
+          localStorage.setItem('matricule', matricule);
+          window.location.reload();
         },
         (error) => {
           this.openSnackBar('Erreur lors de la requête');
@@ -78,15 +81,16 @@ export class VoirDetailComponent implements OnInit {
     ).subscribe(
       (response) => {
         this.openSnackBar('Requête réussie');
-         this.dialog.closeAll(); 
-
+        localStorage.setItem('assuranceNom', assuranceNom);
+        localStorage.setItem('matricule', matricule);
+        window.location.reload();
       },
       (error) => {
         this.openSnackBar('Erreur lors de la requête');
 
       }
     );
-    
+
   }
   }
 

@@ -13,7 +13,9 @@ export interface Adherant {
   dateNais: Date;
   gouvNais: string;
   paysNais: string;
+  email: string;
   plafond: number;
+  active: boolean;
   prestations: Prestation[];
   beneficiaires: Beneficiaire[];
   assurance: Assurance;

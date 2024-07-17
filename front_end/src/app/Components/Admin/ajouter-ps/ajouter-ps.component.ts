@@ -16,7 +16,7 @@ export class AjouterPsComponent implements OnInit {
   roles: ERole[] = [];
   psForm: FormGroup;
   roless: Role[];
-  isLoading: boolean = false; 
+  isLoading: boolean = false;
   constructor(private fb: FormBuilder, private userService: UserServiceService , private route :Router) { }
 
   ngOnInit(): void {
@@ -49,7 +49,6 @@ export class AjouterPsComponent implements OnInit {
           console.log('User added successfully:', response);
           this.psForm.reset();
 
-          this.route.navigate(['/menu/admin/ps']);  
 
           this.route.navigate(['/menu/admin/ps']);
           this.isLoading = false;

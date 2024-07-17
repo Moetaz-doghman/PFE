@@ -1,0 +1,105 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title text-center mb-4">Liste des bordereaux contre visite</h2>
+
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="prestataireSelect">Sélectionner un prestataire</label>
+      <select class="form-select" id="prestataireSelect" [(ngModel)]="selectedPrestataire" (change)="onPrestataireChange()">
+        <option [ngValue]="null">Tous les prestataires</option>
+        <option *ngFor="let prestataire of prestataires" [ngValue]="prestataire">
+          {{ prestataire }}
+        </option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Référence</th>
+            <th scope="col">Prestataire</th>
+            <th scope="col">Date </th>
+            <th scope="col">Nombre de prestations</th>
+            <th scope="col">Montant totale</th>
+            <th scope="col">Montant ticket moderateur</th>
+            <th scope="col">Montant total Remboursable</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bordereau of dataSource.data">
+            <td>{{ bordereau.refNumber }}</td>
+            <td>{{ bordereau.prestations[0].user.nom }} {{ bordereau.prestations[0].user.prenom }}</td>
+            <td>{{ bordereau.dateCreationF  }}</td>
+            <td>{{ bordereau.nbPrestation }}</td>
+            <td>{{ bordereau.montant_total }}</td>
+            <td>{{ bordereau.montant_ticket_moderateur }}</td>
+            <td>{{ bordereau.montant_total_Remboursable }}</td>
+            <td>
+              <ul class="list-unstyled">
+                <span class="bg-info">{{ bordereau.status }}</span>
+              </ul>
+              <em class="fas fa-edit text-primary" style="cursor: pointer;" (click)="selectBordereau(bordereau)" data-bs-toggle="modal" data-bs-target="#staticedit"></em>
+            </td>
+            <td>
+              <button class="btn btn-danger" data-bs-toggle="modal" (click)="confirmDelete(bordereau)" data-bs-target="#deleteConfirmationModal">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="btn btn-success" (click)="showBordereauDetails(bordereau.id)">
+                <i class="fas fa-info-circle"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modèle de confirmation de suppression -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmer la suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer ce bordereau?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteBorderau()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add  Modal -->
+<div class="modal fade" id="staticedit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Changer le Statut</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #ajouterRoleForm="ngForm" (ngSubmit)="changerStatutBordereau(selectedBordereaux)">
+          <div class="form-group">
+            <label for="role"></label>
+            <select class="form-select form-control-lg" id="role" name="role" [(ngModel)]="nouveauStatut" required>
+              <option value="EN_COURS_DE_TRAITEMENT">EN COURS DE TRAITEMENT</option>
+              <option value="EN_ATTENTE">EN ATTENTE</option>
+              <option value="INCOMPLET">INCOMPLET</option>
+              <option value="REGLEE">REGLEE</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -25,16 +25,16 @@
                         </div>
                       </div>
                     </div>
-                    <!-- Matricule -->
+                    <!-- Email -->
                     <div class="col-md-4 mb-4">
                       <div class="form-outline">
-                        <input type="text" class="form-control form-control-lg" formControlName="matricule" />
-                        <label class="form-label">Matricule</label>
+                        <input type="email" class="form-control form-control-lg" formControlName="email" />
+                        <label class="form-label">Email</label>
                         <div *ngIf="
-                              adherantForm.get('matricule')?.hasError('required') &&
-                              adherantForm.get('matricule').touched
+                              adherantForm.get('email')?.hasError('required') &&
+                              adherantForm.get('email').touched
                             " class="text-danger">
-                          Matricule est obligatoire
+                          Email est obligatoire
                         </div>
                       </div>
                     </div>

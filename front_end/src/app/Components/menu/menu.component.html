@@ -6,7 +6,7 @@
       </button>
       <div class="sidebar-logo">
         <a class="navbar-brand" routerLink="/user/adherant">
-          <img src="../../../assets/logo-bpo.png" alt="MDB Logo" />
+          <img src="../../../assets/images/medicare2.png" alt="MDB Logo" width="100" />
         </a>
       </div>
     </div>
@@ -93,7 +93,7 @@
             <a routerLink="/menu/admin/prestationDentist" class="sidebar-link"><i class="lni lni-list"></i> Prestation ordinaire</a>
           </li>
           <li class="sidebar-item">
-            <a routerLink="/prestation/cont" class="sidebar-link"><i class="lni lni-list"></i> Prestation contre
+            <a routerLink="/menu/admin/prestationCV" class="sidebar-link"><i class="lni lni-list"></i> Prestation contre
               visite</a>
           </li>
         </ul>
@@ -103,20 +103,24 @@
 
       <li class="sidebar-item" *ngIf="showAdminBoard">
         <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#bordereaux">
-          <i class="lni lni-users"></i>
+          <i class="lni lni-folder"></i>
           <span>Gestion des bordereaux</span>
         </a>
         <ul id="bordereaux" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar"
           aria-expanded="false" aria-controls="adherant">
           <li class="sidebar-item">
-            <a routerLink="/menu/admin/bordereaux" class="sidebar-link"><i class="lni lni-list"></i> Liste des bordereaux</a>
+            <a routerLink="/menu/admin/bordereaux" class="sidebar-link"><i class="lni lni-list"></i> Bordereaux ordinaire </a>
+          </li>
+          <li class="sidebar-item">
+            <a routerLink="/menu/admin/bordereauxCV" class="sidebar-link"><i class="lni lni-list"></i> Bordereaux contre visite </a>
           </li>
         </ul>
+
       </li>
 
       <li class="sidebar-item" *ngIf="showAdminBoard">
-        <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#bordereaux">
-          <i class="lni lni-users"></i>
+        <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#nomenclature">
+          <i class="lni lni-clipboard"></i>
           <span>Gestion des nomenclatures</span>
         </a>
         <ul id="nomenclature" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar"
@@ -129,10 +133,16 @@
 
 
       <li class="sidebar-item" *ngIf="showAdminBoard">
-        <a href="#" class="sidebar-link">
-          <i class="lni lni-popup"></i>
-          <span>Gestion des notifications</span>
+        <a routerLink="/menu/admin/assurance" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#assurance" >
+          <i class="lni lni-apartment"></i>
+          <span>Gestion des assurances</span>
         </a>
+        <ul id="assurance" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar"
+        aria-expanded="false" aria-controls="adherant">
+        <li class="sidebar-item">
+          <a routerLink="/menu/admin/assurance" class="sidebar-link"><i class="lni lni-list"></i>Liste des assurances</a>
+        </li>
+      </ul>
       </li>
 
       <!-- --------------------------------------menu opticien---------------------------------------------- -->
@@ -159,12 +169,18 @@
         </ul>
       </li>
       <li class="sidebar-item" *ngIf="showOpticienBoard">
+        <a routerLink="/menu/opt/historiquePrestationsOpt" class="sidebar-link">
+          <i class="fa fa-history"></i>
+          <span>Historique Prestations</span>
+        </a>
+      </li>
+      <li class="sidebar-item" *ngIf="showOpticienBoard">
         <a routerLink="/menu/reclamation" class="sidebar-link">
           <i class="fas fa-exclamation-circle"></i>
           <span>Réclamations</span>
         </a>
       </li>
-      <!-- --------------------------------------menu Dentiste---------------------------------------------- -->
+      <!----------------------------------------- menu Dentiste ------------------------------------------------->
       <li class="sidebar-item" *ngIf="showDentistBoard">
         <a routerLink="/menu/dent/ajoutpre" class="sidebar-link">
           <i class="fas fa-plus-circle"></i>
@@ -188,11 +204,18 @@
         </ul>
       </li>
       <li class="sidebar-item" *ngIf="showDentistBoard">
+        <a routerLink="/menu/dent/historiquePrestations" class="sidebar-link">
+          <i class="fa fa-history"></i>
+          <span>Historique Prestations</span>
+        </a>
+      </li>
+      <li class="sidebar-item" *ngIf="showDentistBoard">
         <a routerLink="/menu/reclamation" class="sidebar-link">
           <i class="fas fa-exclamation-circle"></i>
           <span>Réclamations</span>
         </a>
       </li>
+
       <!-- --------------------------------------menu DentisteControlleur---------------------------------------------- -->
       <li class="sidebar-item" *ngIf="showDentistControleurBoard">
         <a routerLink="/menu/dentc/ajoutPrestD" class="sidebar-link">
@@ -222,7 +245,7 @@
           </li>
         </ul>
       </li>
-      <li class="sidebar-item" *ngIf="showOpticienBoard">
+      <li class="sidebar-item" *ngIf="showDentistControleurBoard">
         <a routerLink="/menu/reclamation" class="sidebar-link">
           <i class="fas fa-exclamation-circle"></i>
           <span>Réclamations</span>
@@ -258,7 +281,7 @@
           </li>
         </ul>
       </li>
-      <li class="sidebar-item" *ngIf="showOpticienBoard">
+      <li class="sidebar-item" *ngIf="showOpticienControleurBoard">
         <a routerLink="/menu/reclamation" class="sidebar-link">
           <i class="fas fa-exclamation-circle"></i>
           <span>Réclamations </span>
@@ -276,7 +299,7 @@
             <a routerLink="/menu/profil" class="sidebar-link"><i class="fas fa-tasks"></i> mon profil</a>
           </li>
           <li class="sidebar-item">
-            <a routerLink="/prestation/cont" class="sidebar-link"><i class="fas fa-file-alt"></i> changer mot de
+            <a routerLink="/menu/changer_mot_de_passe" class="sidebar-link"><i class="fas fa-file-alt"></i> changer mot de
               passe</a>
           </li>
         </ul>

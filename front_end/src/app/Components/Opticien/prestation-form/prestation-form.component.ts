@@ -15,8 +15,8 @@ export class PrestationFormComponent implements OnInit, AfterContentChecked{
 
   @Input() adherant: any;
   currentDate: string = new Date().toISOString();
-  
-  
+
+
   optiqueForm: FormGroup;
   showSecondPage: boolean = false;
   showCalculation: boolean = false;
@@ -59,7 +59,7 @@ export class PrestationFormComponent implements OnInit, AfterContentChecked{
     this.totalOrdonnance = 0;
     this.montantTicketModerateur = 0;
     this.montantRembourse = 0;
-  
+
     const prixVG = this.optiqueForm.get('valeurVerreOeilGauche')?.value || 0;
     const prixVD = this.optiqueForm.get('valeurVerreOeilDroit')?.value || 0;
     const prixMont = this.optiqueForm.get('valeurMonture')?.value || 0;
@@ -68,8 +68,15 @@ export class PrestationFormComponent implements OnInit, AfterContentChecked{
     this.montantTicketModerateur = 40;
     this.montantRembourse = this.totalOrdonnance - this.montantTicketModerateur;
 
-    this.showCalculation = true;
+    if (this.totalOrdonnance > this.data.adherant.plafond) {
+        this.plafondErrorMessage = "Le montant total de la prestation dépasse le plafond de l'adhérent";
+        this.showCalculation = false;
+    } else {
+        this.plafondErrorMessage = "";
+        this.showCalculation = true;
+    }
 }
+
 
 
 
@@ -91,6 +98,8 @@ export class PrestationFormComponent implements OnInit, AfterContentChecked{
         valeurVerreOeilGauche : this.optiqueForm.get('valeurVerreOeilGauche').value,
         valeurVerreOeilDroit : this.optiqueForm.get('valeurVerreOeilDroit').value,
         valeurMonture : this.optiqueForm.get('valeurMonture').value,
+        selectedBeneficiaireIndex : this.selectedBeneficiaireIndex
+
       },
     });
 
@@ -117,7 +126,7 @@ export class PrestationFormComponent implements OnInit, AfterContentChecked{
 
   plafondCheck(): boolean {
     if (this.totalOrdonnance > this.data.adherant.plafond) {
-      this.plafondErrorMessage = "Le montant total de la prestation dépasse le plafond de l'adhérent (" + this.data.adherant.plafond + ").";
+      this.plafondErrorMessage = "Le montant total de la prestation dépasse le plafond de l'adhérent";
       return true;
     } else {
       this.plafondErrorMessage = "";

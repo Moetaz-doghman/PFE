@@ -13,35 +13,31 @@ import { UserServiceService } from 'src/app/Services/user-service.service';
 })
 export class ListePsComponent implements OnInit {
   ps: User[] = [];
+  filteredPs: User[] = [];
   switchState: boolean = false;
   userIdToDelete: any = -1;
   nouveauRole: ERole;
   dataSource = new MatTableDataSource<User>([]);
   totalItems = 0;
   pageSize = 5;
-  pageSizeOptions: number[] = [5, 10, 15, 20,25,30,35,40];
+  pageSizeOptions: number[] = [5, 10, 15, 20, 25, 30, 35, 40];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   currentPage = 0;
+  searchQuery: string = '';
 
-
-
-  constructor(private userService: UserServiceService, private router: Router) { }
+  constructor(private userService: UserServiceService, private router: Router) {}
 
   ngOnInit(): void {
     this.getPs();
   }
-
-
-
 
   getPs(): void {
     if (this.switchState) {
       this.userService.getUtilisateursActifs().subscribe(
         (response) => {
           this.ps = response;
-          this.dataSource.data = this.ps;
-          this.dataSource.data = this.ps.slice(0, 5);
-          this.totalItems = this.ps.length;
+          this.filteredPs = this.ps;
+          this.applyFilter();
         },
         (error) => {
           console.error('Error fetching active users:', error);
@@ -51,9 +47,8 @@ export class ListePsComponent implements OnInit {
       this.userService.getAllUsersNotadmin().subscribe(
         (response) => {
           this.ps = response;
-          this.dataSource.data = this.ps;
-          this.dataSource.data = this.ps.slice(0, 5);
-          this.totalItems = this.ps.length;
+          this.filteredPs = this.ps;
+          this.applyFilter();
         },
         (error) => {
           console.error('Error fetching adherants:', error);
@@ -98,7 +93,7 @@ export class ListePsComponent implements OnInit {
     }
   }
 
-  onChangeSwitch(id:any ,isChecked: boolean) {
+  onChangeSwitch(id: any, isChecked: boolean): void {
     this.switchState = isChecked;
 
     if (this.switchState) {
@@ -106,7 +101,6 @@ export class ListePsComponent implements OnInit {
         (response) => {
           console.log('Etat and status changed successfully:', response);
           window.location.reload();
-
         },
         (error) => {
           console.error('Error changing Etat and status:', error);
@@ -117,7 +111,6 @@ export class ListePsComponent implements OnInit {
         (response) => {
           console.log('Etat and status changed successfully:', response);
           window.location.reload();
-
         },
         (error) => {
           console.error('Error changing Etat and status:', error);
@@ -129,7 +122,7 @@ export class ListePsComponent implements OnInit {
   onDeletePS(ps_id: number): void {
     this.userService.deleteUtilisateur(ps_id).subscribe(
       (response) => {
-        console.log('adherant  deleted successfully');
+        console.log('Adherant deleted successfully');
         window.location.reload();
       },
       (error) => {
@@ -138,8 +131,8 @@ export class ListePsComponent implements OnInit {
     );
   }
 
-  delete() {
-    if(this.userIdToDelete) {
+  delete(): void {
+    if (this.userIdToDelete) {
       this.onDeletePS(this.userIdToDelete);
     }
   }
@@ -156,25 +149,30 @@ export class ListePsComponent implements OnInit {
     );
   }
 
-
-  onPageChange(event: PageEvent) {
+  onPageChange(event: PageEvent): void {
     const startIndex = event.pageIndex * event.pageSize;
     const endIndex = startIndex + event.pageSize;
-    this.dataSource.data = this.ps.slice(startIndex, endIndex);
+    this.dataSource.data = this.filteredPs.slice(startIndex, endIndex);
     this.currentPage = event.pageIndex;
   }
 
+  applyFilter(): void {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredPs = this.ps.filter((professionnel) => {
+      return (
+        professionnel.nom.toLowerCase().includes(query) ||
+        professionnel.prenom.toLowerCase().includes(query) ||
+        professionnel.matricule.toLowerCase().includes(query) ||
+        professionnel.email.toLowerCase().includes(query)
+      );
+    });
+    this.updateDataSource();
+  }
 
-
-
-
-
-
-
-
-
-
-
+  updateDataSource(): void {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.dataSource.data = this.filteredPs.slice(startIndex, endIndex);
+    this.totalItems = this.filteredPs.length;
+  }
 }
-
-

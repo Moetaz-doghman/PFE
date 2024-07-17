@@ -44,6 +44,14 @@ export class AjouterPrestationOpticienComponent {
 
   ngOnInit(): void {
     this.searchAssuranceNames();
+    const savedAssuranceNom = localStorage.getItem('assuranceNom');
+    const savedMatricule = localStorage.getItem('matricule');
+
+    if (savedAssuranceNom && savedMatricule) {
+      this.assuranceNom = savedAssuranceNom;
+      this.matricule = savedMatricule;
+      this.searchAdherant();
+    }
     this.getPrestationsByUser();
   }
 
@@ -68,6 +76,8 @@ export class AjouterPrestationOpticienComponent {
         (data: Adherant) => {
           this.adherant = data;
           this.searchPerformed = true;
+           localStorage.removeItem('assuranceNom');
+           localStorage.removeItem('matricule');
         },
         (error) => {
           this.openSnackBar('Aucun adhérent trouvé');
@@ -133,26 +143,7 @@ export class AjouterPrestationOpticienComponent {
     }
   }
 
-  filterByDate() {
-    if (!this.startDate || !this.endDate) {
-      this.openSnackBar('Veuillez sélectionner une date de début et une date de fin.');
-      return;
-    }
 
-    if(this.startDate > this.endDate){
-      this.openSnackBar('La date de début doit être antérieure à la date de fin.');
-      return;
-    }
-
-    const startDate = new Date(this.startDate);
-    const endDate = new Date(this.endDate);
-
-
-    this.filteredPrestations = this.prestations.filter(prestation => {
-      const prestationDate = new Date(prestation.dateCreation);
-      return prestationDate >= startDate && prestationDate <= endDate;
-    });
-  }
 
 
 }

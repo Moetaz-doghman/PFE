@@ -8,6 +8,7 @@ import { ERole, Role } from 'src/app/Models/Role';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/Models/User';
 import { UserServiceService } from 'src/app/Services/user-service.service';
+import { Observable } from 'rxjs';
 
 declare var $: any;
 @Component({
@@ -30,12 +31,13 @@ export class ListPrestationDentisteComponent implements OnInit {
   prestationIdToDelete: number;
   prestationss: Prestation[] = [];
   healthcareProfessionals: User[] = [];
-  usersByRole: User[] = [];
-  selectedPrestation:Prestation ;
+  usersByRole: User[]| null = null;
+  selectedPrestation:Prestation | null = null; ;
   selectedHealthcareProfessionalId: number | undefined;
   formSubmitted: boolean = false;
-  ps:User | null =null ;
+  ps:User ;
   isLoading :boolean ;
+  professionalName:String ="fdsd"
 
 
   constructor(
@@ -60,6 +62,19 @@ export class ListPrestationDentisteComponent implements OnInit {
     this.prestationService.getPrestationsWithActesAndBenef().subscribe(
       (prestations) => {
         this.prestations = prestations;
+
+        this.prestations.forEach(prestation => {
+          this.getProfessionalName(prestation.idUserControlleur).subscribe(
+            (professionalName) => {
+              prestation.professionalName = professionalName;
+            },
+            (error) => {
+              console.error('Error fetching professional name:', error);
+            }
+          );
+        });
+
+
         this.applyFilter();
         this.totalItems = this.prestations.length;
       },
@@ -70,7 +85,7 @@ export class ListPrestationDentisteComponent implements OnInit {
   }
 
 
-  getPsWithId(id:number): void {
+  getPsWithId(id:number): String {
     this.user_service.getUserById(id).subscribe(
       (user) => {
         this.ps = user;
@@ -79,6 +94,25 @@ export class ListPrestationDentisteComponent implements OnInit {
         console.error('Error fetching prestations:', error);
       }
     );
+
+    return `${this.ps.nom} ${this.ps.prenom}`;
+  }
+
+
+
+  getProfessionalName(id: number): Observable<string> {
+    return new Observable<string>((observer) => {
+      this.user_service.getUserById(id).subscribe(
+        (user) => {
+          const professionalName = `${user.nom} ${user.prenom}`;
+          observer.next(professionalName);
+          observer.complete();
+        },
+        (error) => {
+          observer.error(error);
+        }
+      );
+    });
   }
 
   showPrestationDetails(prestationId: number): void {
@@ -158,9 +192,7 @@ export class ListPrestationDentisteComponent implements OnInit {
         if(prestationToDelete.beneficiaire == null){
           this.prestationService.deletePrestation(this.prestationIdToDelete,prestationToDelete.montantTotal).subscribe(() => {
             console.log('Prestation deleted successfully');
-            // Supprimer la prestation de la liste locale
             this.prestations = this.prestations.filter(prestation => prestation.id !== this.prestationIdToDelete);
-            // Appliquer les filtres et réinitialiser le paginator
             this.applyFilter();
             this.resetPaginator();
             this.openSnackBar('Prestation deleted successfully');
@@ -168,9 +200,7 @@ export class ListPrestationDentisteComponent implements OnInit {
         }else{
           this.prestationService.deletePrestationForBenef(this.prestationIdToDelete,prestationToDelete.montantTotal).subscribe(() => {
             console.log('Prestation deleted successfully');
-            // Supprimer la prestation de la liste locale
             this.prestations = this.prestations.filter(prestation => prestation.id !== this.prestationIdToDelete);
-            // Appliquer les filtres et réinitialiser le paginator
             this.applyFilter();
             this.resetPaginator();
             this.openSnackBar('Prestation deleted successfully');
@@ -191,25 +221,17 @@ export class ListPrestationDentisteComponent implements OnInit {
     this.router.navigate(['menu/admin/modifier-prestation', prestationId]);
   }
 
-  showDetails(prestation:Prestation)
-
-  {
+  showDetails(prestation: Prestation) {
     this.selectedPrestation = prestation;
-    if(prestation.user.roles.some(
-      (role) => role.name === "ROLE_OPTICIEN"
-    ))
-    {
+    if (this.selectedPrestation.user.roles.some(
+      (role) => role.name == "ROLE_OPTICIEN"
+    )) {
       this.loadUsersByRole(ERole.ROLE_OPTICIEN_CONTROLEUR);
-
-      }
-
-      else (prestation.user.roles.some(
-        (role) => role.name === "ROLE_DENTIST"
-      ))
-      {
-        this.loadUsersByRole(ERole.ROLE_DENTIST_CONTROLEUR);
-
-        }
+    } else if (this.selectedPrestation.user.roles.some(
+      (role) => role.name == "ROLE_DENTIST"
+    )) {
+      this.loadUsersByRole(ERole.ROLE_DENTIST_CONTROLEUR);
+    }
   }
 
 
@@ -235,7 +257,7 @@ openValidationModal(): void {
 }
 
 validateAffectation(): void {
-  this.isLoading = true; 
+  this.isLoading = true;
   this.prestationService.affecterContreVisite(this.selectedPrestation.id, this.selectedHealthcareProfessionalId).subscribe(
     response => {
       console.log('Prestation affected successfully:', response);
@@ -246,8 +268,7 @@ validateAffectation(): void {
       console.error('Error affecting prestation:', error);
     },
     () => {
-      // This block executes when the subscription completes (whether successfully or with an error)
-      this.isLoading = false; 
+      this.isLoading = false;
     }
   );
 }

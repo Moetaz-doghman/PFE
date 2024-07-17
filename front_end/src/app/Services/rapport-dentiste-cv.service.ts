@@ -18,8 +18,8 @@ export class RapportDentisteCVService {
   }
 
 
-  getCombinedRapports(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/getCombinedRapports`);
+  getCombinedRapports(userId : number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/getCombinedRapports/${userId}`);
   }
 
 

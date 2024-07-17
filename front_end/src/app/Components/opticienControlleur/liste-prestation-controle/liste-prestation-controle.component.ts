@@ -12,50 +12,39 @@ import { RapportServiceService } from 'src/app/Services/rapport-service.service'
 import { StorageServiceService } from 'src/app/Services/storage-service.service';
 import * as qrcode from 'qrcode';
 
-
 @Component({
   selector: 'app-liste-prestation-controle',
   templateUrl: './liste-prestation-controle.component.html',
   styleUrls: ['./liste-prestation-controle.component.css']
 })
-export class ListePrestationControleComponent  implements OnInit  {
-
+export class ListePrestationControleComponent implements OnInit {
 
   prestations: Prestation[] = [];
   selectedPrestation: Prestation | null = null;
   selectedPrestations: Prestation | null = null;
-  user:User ;
+  user: User;
   beneficiaire: Beneficiaire;
   beneficiaire_rapport: Beneficiaire;
-  rapportOpticien :Rapport_C_V_Optcien | null = null;
-  today: Date = new Date();
-  downloadingPDF: boolean = false;
+  rapportOpticien: Rapport_C_V_Optcien | null = null;
+  downloadingPDF: { [key: number]: boolean } = {};
   showSecondContainer: boolean = false;
-  prestationRapport : Prestation | null = null;
+  prestationRapport: Prestation | null = null;
   @ViewChild('pdfSection') pdfSection: ElementRef;
   qrCodeURL: string;
+  today: Date = new Date();
 
 
-  printPDF() {
-    const printContents = this.pdfSection.nativeElement.innerHTML;
-    const originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-  }
-
-
-
-  constructor(private prestation_service :PrestationService,
-    private storageService: StorageServiceService , private router:Router , private adherant_service:AdherantService,
-    private rapportService: RapportServiceService ){}
-
+  constructor(
+    private prestation_service: PrestationService,
+    private storageService: StorageServiceService,
+    private router: Router,
+    private adherant_service: AdherantService,
+    private rapportService: RapportServiceService
+  ) {}
 
   ngOnInit(): void {
-
     this.user = this.storageService.getUser();
-    this.getPrestations()
-
+    this.getPrestations();
   }
 
   getPrestations(): void {
@@ -71,25 +60,11 @@ export class ListePrestationControleComponent  implements OnInit  {
       );
   }
 
-  getRapportOpticien(prestationid :number): void {
-    this.rapportService.findRapportByPrestationId(prestationid)
-      .subscribe(
-        (data : Rapport_C_V_Optcien) => {
-          this.rapportOpticien = data;
-          console.log('rapport:', this.rapportOpticien);
-        },
-        error => {
-          console.error('Erreur lors de la récupération des prestations:', error);
-        }
-      );
-  }
-
-
   showDetails(prestation: Prestation): void {
     let activePrestation = parseInt(prestation.idPrestation);
-     this.prestation_service.getPrestationsById(activePrestation) .subscribe(
-      (data : Prestation) => {
-        this.selectedPrestation =data
+    this.prestation_service.getPrestationsById(activePrestation).subscribe(
+      (data: Prestation) => {
+        this.selectedPrestation = data;
         console.log('rapport:', this.selectedPrestation);
       },
       error => {
@@ -97,19 +72,17 @@ export class ListePrestationControleComponent  implements OnInit  {
       }
     );
     if (this.selectedPrestation.beneficiaireId) {
-      let beneficiareid =parseInt(this.selectedPrestation.beneficiaireId);
-      this.adherant_service.getBeneficiaireById(beneficiareid)
-      .subscribe(
+      let beneficiareid = parseInt(this.selectedPrestation.beneficiaireId);
+      this.adherant_service.getBeneficiaireById(beneficiareid).subscribe(
         (response) => {
-          this.beneficiaire =response
+          this.beneficiaire = response;
         },
         (error) => {
           console.error('Error adding adherent', error);
         }
       );
-    }
-    else {
-      this.beneficiaire = null ;
+    } else {
+      this.beneficiaire = null;
     }
   }
 
@@ -117,109 +90,147 @@ export class ListePrestationControleComponent  implements OnInit  {
     this.router.navigate(['/menu/optc/ajouterRapport', prestationId]);
   }
 
-  showPdf(prestation:Prestation): void {
+  showPdf(prestation: Prestation): void {
+    this.downloadingPDF[prestation.id] = true;
     this.selectedPrestations = prestation;
 
-    if (this.selectedPrestations.beneficiaireId) {
-      let beneficiareid =parseInt(this.selectedPrestations.beneficiaireId);
-      this.adherant_service.getBeneficiaireById(beneficiareid)
-      .subscribe(
-        (response) => {
-          this.beneficiaire_rapport =response
-        },
-        (error) => {
-          console.error('Error adding adherent', error);
-        }
-      );
-    }
-    else {
-      this.beneficiaire_rapport = null ;
-    }
+    const fetchBeneficiaire = () => {
+        return new Promise<void>((resolve, reject) => {
+            if (this.selectedPrestations && this.selectedPrestations.beneficiaireId) {
+                let beneficiareid = parseInt(this.selectedPrestations.beneficiaireId);
+                this.adherant_service.getBeneficiaireById(beneficiareid).subscribe(
+                    (response) => {
+                        this.beneficiaire_rapport = response;
+                        resolve();
+                    },
+                    (error) => {
+                        console.error('Error adding adherent', error);
+                        reject(error);
+                    }
+                );
+            } else {
+                this.beneficiaire_rapport = null;
+                resolve();
+            }
+        });
+    };
 
+    const fetchPrestationRapport = () => {
+        return new Promise<void>((resolve, reject) => {
+            if (this.selectedPrestations) {
+                this.prestation_service.getPrestationsById(this.selectedPrestations.id).subscribe(
+                    (data: Prestation) => {
+                        this.prestationRapport = data;
+                        resolve();
+                    },
+                    (error) => {
+                        console.error('Erreur lors de la récupération des prestations:', error);
+                        reject(error);
+                    }
+                );
+            } else {
+                this.prestationRapport = null;
+                resolve();
+            }
+        });
+    };
 
-    this.showSecondContainer = !this.showSecondContainer;
-    this.prestation_service.getPrestationsById(this.selectedPrestations.id)
-      .subscribe(
-        (data : Prestation) => {
-          this.prestationRapport = data;
-          console.log('rapport:', this.rapportOpticien);
-        },
-        error => {
-          console.error('Erreur lors de la récupération des prestations:', error);
-        }
-      );
-    this.getRapportOpticien(this.selectedPrestations.id);
-    // this.downloadingPDF = true;
-    const qrData = `000${this.rapportOpticien.ref} `;
-    qrcode.toDataURL(qrData, { errorCorrectionLevel: 'H' }, (err, url) => {
-      if (err) {
-        console.error('Erreur lors de la génération du QR code :', err);
-        return;
-      }
-      this.qrCodeURL = url;
-    });
-          if (this.selectedPrestations && this.prestationRapport && this.rapportOpticien) {
-            this.waitForDataToBeReady().then(() => {
+    const fetchRapportOpticien = () => {
+        return new Promise<void>((resolve, reject) => {
+            if (this.selectedPrestations) {
+                this.rapportService.findRapportByPrestationId(this.selectedPrestations.id).subscribe(
+                    (data: Rapport_C_V_Optcien) => {
+                        this.rapportOpticien = data;
+                        resolve();
+                    },
+                    (error) => {
+                        console.error('Erreur lors de la récupération des prestations:', error);
+                        reject(error);
+                    }
+                );
+            } else {
+                this.rapportOpticien = null;
+                resolve();
+            }
+        });
+    };
+
+    const generateQRCode = () => {
+        return new Promise<void>((resolve, reject) => {
+            if (this.rapportOpticien) {
+                const qrData = `000${this.rapportOpticien.ref} `;
+                qrcode.toDataURL(qrData, { errorCorrectionLevel: 'H' }, (err, url) => {
+                    if (err) {
+                        console.error('Erreur lors de la génération du QR code :', err);
+                        reject(err);
+                    } else {
+                        this.qrCodeURL = url;
+                        resolve();
+                    }
+                });
+            } else {
+                this.qrCodeURL = '';
+                resolve();
+            }
+        });
+    };
+
+    const generatePdfs = () => {
+      return new Promise<void>((resolve) => {
+          this.waitForDataToBeReady().then(() => {
               const element = document.getElementById('pdfSection');
               html2canvas(element).then((canvas) => {
+                  const imgData = canvas.toDataURL('image/png');
+                  const doc = new jsPDF('p', 'mm', 'a4');
+                  const imgProps = doc.getImageProperties(imgData);
+                  const pdfWidth = doc.internal.pageSize.getWidth();
+                  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                  doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                  doc.save('rapport.pdf');
+                  this.downloadingPDF[prestation.id] = false;
+                  this.showSecondContainer = !this.showSecondContainer;
+                  resolve();
+              });
+          });
+      });
+  };
+
+
+
+    const generatePdf = () => {
+        return new Promise<void>((resolve) => {
+            const element = document.getElementById('pdfSection');
+            html2canvas(element).then((canvas) => {
                 const imgData = canvas.toDataURL('image/png');
                 const doc = new jsPDF('p', 'mm', 'a4');
                 const imgProps = doc.getImageProperties(imgData);
                 const pdfWidth = doc.internal.pageSize.getWidth();
                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
                 doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                this.downloadingPDF = false;
                 doc.save('rapport.pdf');
+                this.downloadingPDF[prestation.id] = false;
                 this.showSecondContainer = !this.showSecondContainer;
-              });
+                resolve();
             });
-          }
+        });
+    };
 
-      };
+    this.downloadingPDF[prestation.id] = true;
+    this.showSecondContainer = true;
 
-
-  toggleSecondContainer() {
-    this.showSecondContainer = !this.showSecondContainer;
-  }
-
-
-
-  waitForDataToBeReady(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const interval = setInterval(() => {
-        if (document.getElementById('pdfSection')) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 100);
-    });
-  }
-
-
-  generateQRCode(doc: jsPDF, data: string) {
-    const qrWidth = 50;
-    const qrHeight = 50;
-    const margin = 10;
-    const x = (doc.internal.pageSize.getWidth() - qrWidth) / 2;
-    const y = doc.internal.pageSize.getHeight() - qrHeight - margin;
-
-    qrcode.toDataURL(data, { errorCorrectionLevel: 'H' }, (err, url) => {
-      if (err) {
-        console.error('Erreur lors de la génération du QR code :', err);
-        return;
-      }
-      doc.addImage(url, 'PNG', x, y, qrWidth, qrHeight);
-    });
-  }
-
-
-
-
-
+    Promise.all([fetchBeneficiaire(), fetchPrestationRapport(), fetchRapportOpticien()])
+        .then(generateQRCode)
+        .then(generatePdfs)
+        .catch(error => {
+            console.error('Error in fetching data:', error);
+            this.downloadingPDF[prestation.id] = false;
+        });
 }
 
 
-
-
-
-
+private waitForDataToBeReady(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), 500);
+  });
+}
+}

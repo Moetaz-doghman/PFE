@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container mt-4">
+            <h2 class="card-header text-center">
+              <i class="fa-solid fa-bars"></i> Historique de mes prestations
+            </h2>
+            <div class="mb-3">
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>Numéro transaction</th>
+                      <th>Matricule de l'assuré</th>
+                      <th>Nom de l'assuré</th>
+                      <th>Date de prestation</th>
+                      <th>Montant total</th>
+                      <th>Type de prestation</th>
+                      <th>Status</th>
+                      <th>Détails</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let prestation of prestations">
+                      <td>{{ prestation.ref }}</td>
+                      <td>{{ prestation.adherant.matricule }}</td>
+                      <td>{{ prestation.adherant.nom }} {{ prestation.adherant.prenom }}</td>
+                      <td>{{ prestation.dateCreation }}</td>
+                      <td>{{ prestation.montantTotal }}</td>
+                      <td>{{ prestation.type }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="getStatusBadgeClass(prestation.etat)">
+                          {{ getStatusText(prestation.etat) }}
+                        </span>
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                          data-bs-target="#voirdetails" (click)="showDetails(prestation)">
+                          Voir détails
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails -->
+<div class="modal fade" id="voirdetails" tabindex="-1" aria-labelledby="voirdetailsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="voirdetailsLabel">
+          Détails de la prestation
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Affichage des détails de la prestation -->
+        <div *ngIf="selectedPrestation">
+          <p>Numéro transaction : {{ selectedPrestation.ref }}</p>
+          <p>
+            Matricule de l'assuré : {{ selectedPrestation.adherant.matricule }}
+          </p>
+          <p>Nom de l'assuré : {{ selectedPrestation.adherant.nom }}</p>
+          <p>Montant total : {{ selectedPrestation.montantTotal }}</p>
+          <p>Montant remboursé : {{ selectedPrestation.montantRembourse }}</p>
+          <div class="actes">
+            <span  *ngFor="let acte of selectedPrestation.actes">
+              <span class="badge" [ngClass]="getRoleBadgeClass(acte.nom)">{{
+                acte.nom
+                }}</span>            </span>
+
+          </div>
+          <div *ngIf="beneficiaire">
+            <p>Nom du bénéficiaire : {{ beneficiaire.nom }}</p>
+            <p>Sexe du bénéficiaire : {{ beneficiaire.sexe }}</p>
+            <p>Qualité du bénéficiaire : {{ beneficiaire.qualite }}</p>
+            <p>
+              Date de naissance : {{ beneficiaire.dateNais | simpleDateFormat }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -40,6 +40,15 @@ export class AjoutPrestationComponent {
 
   ngOnInit(): void {
     this.searchAssuranceNames();
+
+    const savedAssuranceNom = localStorage.getItem('assuranceNom');
+    const savedMatricule = localStorage.getItem('matricule');
+
+    if (savedAssuranceNom && savedMatricule) {
+      this.assuranceNom = savedAssuranceNom;
+      this.matricule = savedMatricule;
+      this.searchAdherant();
+    }
   }
 
   getPrestationsByUserAndAdherant(userId: number, adherantId: number) {
@@ -61,15 +70,15 @@ export class AjoutPrestationComponent {
   }
 
   searchAdherant() {
-      this.adherantService
-      .findbyAssuranceandMAtricule(this.assuranceNom, this.matricule)
+    this.adherantService.findbyAssuranceandMAtricule(this.assuranceNom, this.matricule)
       .subscribe(
         (data: Adherant) => {
           this.adherant = data;
           const userId = this.storageService.getUser().id;
           this.getPrestationsByUserAndAdherant(userId, this.adherant.id);
           this.searchPerformed = true;
-
+          localStorage.removeItem('assuranceNom');
+          localStorage.removeItem('matricule');
         },
         (error) => {
           this.openSnackBar('Aucun adhérent trouvé');
@@ -94,7 +103,7 @@ export class AjoutPrestationComponent {
 
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Fermer', {
-      duration: 3000,
+      duration: 5000,
     });
   }
 
@@ -103,12 +112,12 @@ export class AjoutPrestationComponent {
     index: number
   ): void {
     const dialogRef = this.dialog.open(AjoutVisiteDentaireComponent, {
-      width: '600px', // Ajustez la largeur selon vos besoins
+      width: '600px', 
       data: {
         adherant: this.adherant,
         isBeneficiaire: isBeneficiaire,
         selectedBeneficiaireIndex: index,
-      }, // Passer les données ici
+      }, 
     });
 
     dialogRef.afterClosed().subscribe((result) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ResumeDialogComponent } from '../Dentiste/resume-dialog/resume-dialog.component';
@@ -9,7 +9,7 @@ import { PrestationService } from 'src/app/Services/prestation-service.service';
   templateUrl: './ajout-visite-dentaire.component.html',
   styleUrls: ['./ajout-visite-dentaire.component.css'],
 })
-export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked {
+export class AjoutVisiteDentaireComponent implements OnInit {
   isBeneficiaire: boolean = false;
   selectedBeneficiaireIndex: number;
 
@@ -26,24 +26,24 @@ export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked
   showSecondPage: boolean = false;
   showCalculation: boolean = false;
   showFormControls: boolean = false;
-
   totalOrdonnance: number = 0;
   montantTicketModerateur: number = 0;
   montantRembourse: number = 0;
-
   plafondErrorMessage: string = '';
 
   constructor(
     private dialog: MatDialog,
     private formBuilder: FormBuilder,
-    private calculationService: PrestationService, // Assurez-vous d'avoir un service pour les calculs
+    private calculationService: PrestationService,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.adherant = this.data.adherant;
+    console.log(this.adherant)
     this.isBeneficiaire = this.data.isBeneficiaire;
     this.selectedBeneficiaireIndex = this.data.selectedBeneficiaireIndex;
+
 
 
     this.dentaireForm = this.formBuilder.group({
@@ -58,7 +58,13 @@ export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked
       .filter(acte => acte.selected)
       .map(acte => acte.name);
 
+    let beneficaireId: number | null = null;
+    if (this.selectedBeneficiaireIndex !== null && this.adherant.beneficiaires && this.adherant.beneficiaires[this.selectedBeneficiaireIndex]) {
+      beneficaireId = this.adherant.beneficiaires[this.selectedBeneficiaireIndex].id;
+    }
+
     const requestData = {
+      beneficaireId: beneficaireId, 
       adherantId: this.adherant.id,
       actes: selectedActes,
       totalCotation: this.dentaireForm.get('totalCot').value,
@@ -66,12 +72,24 @@ export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked
       assuranceName: this.adherant.assurance.nom
     };
 
-    this.calculationService.calculate(requestData).subscribe(response => {
-      this.totalOrdonnance = response.totalOrdonnance;
-      this.montantTicketModerateur = response.montantTicketModerateur;
-      this.montantRembourse = response.montantRembourse;
-      this.showCalculation = true;
-    });
+    console.log(requestData)
+    this.calculationService.calculate(requestData).subscribe(
+      response => {
+        this.totalOrdonnance = response.totalOrdonnance;
+        this.montantTicketModerateur = response.montantTicketModerateur;
+        this.montantRembourse = response.montantRembourse;
+        this.showCalculation = true;
+        this.plafondErrorMessage = '';
+      },
+      error => {
+        if (error.status === 500) {
+          this.plafondErrorMessage = error.error.message;
+        } else {
+          this.plafondErrorMessage = 'Une erreur est survenue. Veuillez réessayer plus tard.';
+        }
+        this.showCalculation = false;
+      }
+    );
   }
 
 
@@ -86,6 +104,7 @@ export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked
         montantRembourse: this.montantRembourse,
         isBeneficiaire: this.isBeneficiaire,
         totalCotation: this.dentaireForm.get('totalCot').value,
+        selectedBeneficiaireIndex: this.selectedBeneficiaireIndex
       },
     });
 
@@ -96,34 +115,16 @@ export class AjoutVisiteDentaireComponent implements OnInit, AfterContentChecked
 
   isNextButtonEnabled(): boolean {
     const selectedActes = this.actesDentaires.filter(acte => acte.selected);
-    console.log('Selected Actes:', selectedActes);
-    return (
-      this.dentaireForm.valid  &&
-      (this.showCalculation || (selectedActes.length === 1 && selectedActes[0].name === 'Consultation')) &&
-      !this.plafondCheck() &&
-      (this.totalOrdonnance !== 0 || selectedActes.some(acte => acte.name === 'Consultation')) &&
-      (this.montantTicketModerateur !== 0 || selectedActes.some(acte => acte.name === 'Consultation')) &&
-      (this.montantRembourse !== 0 || selectedActes.some(acte => acte.name === 'Consultation'))
-    );
+    const isConsultationSelectedAlone = selectedActes.length === 1 && selectedActes[0].name === 'Consultation';
+    const isTotalCotationCalculated = this.showCalculation;
+    return isConsultationSelectedAlone || isTotalCotationCalculated;
   }
 
   isCalculateButtonEnabled(): boolean {
     return this.dentaireForm.get('totalCot').value.trim() !== '';
   }
 
-  ngAfterContentChecked(): void {
-    this.plafondCheck();
-  }
 
-  plafondCheck(): boolean {
-    if (this.totalOrdonnance > this.data.adherant.plafond) {
-      this.plafondErrorMessage = "Le montant total de la prestation dépasse le plafond de l'adhérent (" + this.data.adherant.plafond + ").";
-      return true;
-    } else {
-      this.plafondErrorMessage = "";
-      return false;
-    }
-  }
 
   toggleActeSelection(acte: any): void {
     acte.selected = !acte.selected;

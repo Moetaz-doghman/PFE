@@ -3,32 +3,42 @@
     <div class="col-md-12">
       <div class="container mt-4">
         <div class="custom-navbar">
-          <button class="btn btn-primary btn-rounded-rectangle-rounded-right" type="button"
-            routerLink="/menu/dent/ordonnance-non-facturee">Ordonnance non facturée</button>
-          <button class="btn btn-primary btn-rounded-rectangle-rounded-right active" type="button"
-            id="bordereauFacture">Bordereau de facture</button>
+          <button
+          class="btn btn-primary btn-rounded-rectangle-rounded-right "
+          type="button"
+          id="ordonnanceNonFacture"
+          [routerLink]="userRoleRoute === 'ROLE_OPTICIEN' ? '/menu/opt/ordonnance-non-facturee' : userRoleRoute === 'ROLE_DENTIST' ? '/menu/dent/ordonnance-non-facturee' : ''"
+        >
+          Prestation non facturée
+        </button>
+        <button
+          class="btn btn-primary btn-rounded-rectangle-rounded-right active"
+          type="button"
+          id="bordereauFacture"
+          [routerLink]="userRoleRoute === 'ROLE_OPTICIEN' ? '/menu/opt/bordereau-facture' : userRoleRoute === 'ROLE_DENTIST' ? '/menu/dent/bordereau-facture' : ''"
+        >
+          Bordereau de facture
+        </button>
         </div>
         <div class="navbar-line"></div>
 
-        <div class="row mt-4">
-          <div class="col-md-12">
-            <div class="border border-secondary p-3 rounded">
-              <div class="form-row">
-                <div class="form-group col-md-12">
-                  <label for="startDate">Date de début :</label>
-                  <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate" />
-                </div>
-                <div class="form-group col-md-12">
-                  <label for="endDate" class="mt-2">Date de fin :</label>
-                  <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate" />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group col-md-12 d-flex justify-content-end">
-                  <button class="btn btn-primary" id="filterButton" id="filterButton"
-                    (click)="filterByDate()">Filtrer</button>
-                </div>
-              </div>
+         <div class="row mt-3 border border-secondary p-3 rounded">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="startDate">Date de début :</label>
+              <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="endDate">Date de fin :</label>
+              <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="filterButton" class="invisible">Filtrer</label>
+              <button class="btn btn-primary w-100 " id="filterButton" (click)="filterByDate()">Filtrer</button>
             </div>
           </div>
         </div>
@@ -41,14 +51,14 @@
           <table class="table table-bordered table-striped align-middle" id="pdfTable">
             <thead class="bg-light">
               <tr>
-                <th>Reference</th>
-                <th>numéro de facture</th>
+                <th>Numéro de facture</th>
                 <th>Date de création</th>
                 <th>Nombre de prestations</th>
                 <th>Montant total</th>
                 <th>Montant remboursable</th>
                 <th>Montant ticket modérateur</th>
                 <th>Status</th>
+                <th>Telecharger</th>
               </tr>
             </thead>
             <tbody>
@@ -74,7 +84,6 @@
               </ng-container>
               <ng-container *ngIf="filteredBordereaux.length > 0">
                 <tr *ngFor="let bord of dataSource.data">
-                  <td>{{ bord.ref}}</td>
                   <td>{{ bord.ref}}</td>
                   <td>{{ bord.dateCreationF }}</td>
                   <td>{{ bord.nbPrestation}}</td>
@@ -113,7 +122,7 @@
   <div class="card">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand mr-auto" href="#">
-        <img src="assets/images/logo.png" width="100" height="50" class="d-inline-block align-top" alt="">
+        <img src="assets/images/medicare2.png" width="100" height="100" class="d-inline-block align-top" alt="">
       </a>
       <span class="navbar-text mx-auto mx-3">
         <h2>Bordereau</h2>

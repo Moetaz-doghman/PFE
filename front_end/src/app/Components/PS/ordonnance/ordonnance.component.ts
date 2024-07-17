@@ -9,6 +9,9 @@ import { PrestationService } from 'src/app/Services/prestation-service.service';
 import { StorageServiceService } from 'src/app/Services/storage-service.service';
 import { parse } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { User } from 'src/app/Models/User';
+import { Role } from 'src/app/Models/Role';
+import { AuthServiceService } from 'src/app/Services/auth-service.service';
 
 @Component({
   selector: 'app-ordonnance',
@@ -27,7 +30,10 @@ export class OrdonnanceComponent implements OnInit {
   filteredPrestations: Prestation[] = [];
   filterApplied: boolean = false;
   today: Date = new Date();
-
+  userRole: string;
+  user: User;
+  private roles: Role[] = [];
+  userRoleRoute: string;
   currentPage = 0;
 
   constructor(
@@ -35,11 +41,39 @@ export class OrdonnanceComponent implements OnInit {
     private storageService: StorageServiceService,
     private snackBar: MatSnackBar,
     private bordereauService: BordereauService,
-    private router :Router
+    private router :Router,
+    private authService: AuthServiceService
   ) {}
 
   ngOnInit(): void {
+    this.user = this.storageService.getUser();
     this.getPrestationsByUser();
+    this.setUserRole();
+    this.roles = this.user.roles;
+    this.setUserRoleRoute();
+
+
+  }
+
+
+  setUserRoleRoute(): void {
+    if (this.authService.HaveAccessOpt1()) {
+      this.userRoleRoute = 'ROLE_OPTICIEN';
+    } else if (this.authService.HaveAccessDent1()) {
+      this.userRoleRoute = 'ROLE_DENTIST';
+    } else {
+      this.userRoleRoute = 'NO_ACCESS';
+    }
+  }
+
+
+
+  setUserRole(): void {
+    if (this.roles.some((role: Role) => role.name === 'ROLE_OPTICIEN')) {
+      this.userRole = 'ROLE_OPTICIEN';
+    } else if (this.roles.some((role: Role) => role.name === 'ROLE_DENTIST')) {
+      this.userRole = 'ROLE_DENTIST';
+    }
   }
 
   getPrestationsByUser() {
@@ -105,7 +139,7 @@ export class OrdonnanceComponent implements OnInit {
     }
 
     this.filteredPrestations = this.prestations.filter((prestation) => {
-      const prestationDate = parse(prestation.dateCreation.toString(), 'd MMM yyyy', new Date(), { locale: fr });
+      const prestationDate = new Date(prestation.dateCreation);
       return prestationDate >= startDate && prestationDate <= endDate;
     });
 
@@ -138,10 +172,9 @@ export class OrdonnanceComponent implements OnInit {
       }
     );
 
-    this.router.navigate(['/menu/opt/bordereau-facture']);
   }
 
   isAnyPrestationSelected(): boolean {
-    return this.dataSource.data.some((prestation) => prestation.selected);
+    return this.dataSource.data.filter((prestation) => prestation.selected).length >= 2;
   }
 }

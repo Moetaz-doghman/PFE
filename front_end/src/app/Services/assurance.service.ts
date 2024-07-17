@@ -11,16 +11,16 @@ export class AssuranceService {
 
   constructor(private http: HttpClient) { }
 
-  ajouterAssurance(assurance: Assurance): Observable<Assurance> {
-    return this.http.post<Assurance>(`${this.baseUrl}}/`, assurance);
+  getAllAssurances(): Observable<Assurance[]> {
+    return this.http.get<Assurance[]>(this.baseUrl);
   }
 
   getAssuranceById(id: number): Observable<Assurance> {
     return this.http.get<Assurance>(`${this.baseUrl}/${id}`);
   }
 
-  getAllAssurances(): Observable<Assurance[]> {
-    return this.http.get<Assurance[]>(`${this.baseUrl}/`);
+  createAssurance(assurance: Assurance): Observable<Assurance> {
+    return this.http.post<Assurance>(this.baseUrl, assurance);
   }
 
   updateAssurance(id: number, assurance: Assurance): Observable<Assurance> {
@@ -30,4 +30,5 @@ export class AssuranceService {
   deleteAssurance(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+  
 }

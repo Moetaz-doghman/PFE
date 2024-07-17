@@ -33,7 +33,7 @@ export const slideInOutAnimation = trigger('slideInOutAnimation', [
   selector: 'app-contre-visite-dentiste',
   templateUrl: './contre-visite-dentiste.component.html',
   styleUrls: ['./contre-visite-dentiste.component.css'],
-  animations: [slideInOutAnimation], // Assurez-vous d'ajouter l'animation dans la liste des animations du composant
+  animations: [slideInOutAnimation],
 })
 export class ContreVisiteDentisteComponent implements OnInit {
   isTransitioning: boolean = false;
@@ -41,7 +41,7 @@ export class ContreVisiteDentisteComponent implements OnInit {
   currentGroupIndex: number = 0;
   today: Date = new Date();
   lastdent: string = '';
-  nomenclatures: any[] = []; // Add a property to store the fetched nomenclatures
+  nomenclatures: any[] = [];
   teeth = [
     { value: 'tooth-1', label: 'Dent 1' },
     { value: 'tooth-2', label: 'Dent 2' },
@@ -96,6 +96,8 @@ export class ContreVisiteDentisteComponent implements OnInit {
   @ViewChild('qrCanvas') qrCanvas: ElementRef;
   qrCodeURL: string;
   reportReference: string;
+  lastSelectedTeeth: string[] = [];
+
 
   constructor(
     private dataSharingService: DataSharingService,
@@ -106,6 +108,8 @@ export class ContreVisiteDentisteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.lastSelectedTeeth = Array(this.groupedPrestations.length).fill('');
+
     const selectedPrestations = this.dataSharingService.getSelectedPrestations();
     if (!selectedPrestations || selectedPrestations.length === 0) {
       this.openSnackBar('Vous devez selectionner des prestations contre visite');
@@ -114,7 +118,6 @@ export class ContreVisiteDentisteComponent implements OnInit {
     }
 
     this.groupPrestationsByActe(selectedPrestations);
-
     this.loadNomenclatureDataForActe();
     this.updateButtonStatus();
   }
@@ -248,7 +251,6 @@ export class ContreVisiteDentisteComponent implements OnInit {
               return reject('Element not found');
             }
 
-            // Wait a moment to ensure all dynamic content is rendered
             setTimeout(() => {
               html2canvas(element)
                 .then((canvas) => {
@@ -316,7 +318,7 @@ export class ContreVisiteDentisteComponent implements OnInit {
                   this.showSecondContainer = !this.showSecondContainer;
                   reject(err);
                 });
-            }, 1000); // Adjust the delay as needed
+            }, 1000);
           })
           .catch((err) => {
             this.downloadingPDF = false;
@@ -329,20 +331,19 @@ export class ContreVisiteDentisteComponent implements OnInit {
 
   private waitForDataToBeReady(): Promise<void> {
     return new Promise((resolve) => {
-      setTimeout(() => resolve(), 500); // Adjust the delay as needed
+      setTimeout(() => resolve(), 500);
     });
   }
 
   onDentSelectionChange(event: MatSelectChange): void {
     const selected: string = event.value as string;
-    console.log(selected);
 
-    if (this.lastdent !== '') {
-      $('.' + this.lastdent + '-parent').css('fill', 'red');
+    if (this.lastSelectedTeeth[this.currentGroupIndex] !== '') {
+      $('.' + this.lastSelectedTeeth[this.currentGroupIndex] + '-parent').css('fill', 'none');
     }
     $('.' + selected + '-parent').css('fill', 'red');
 
-    this.lastdent = selected;
+    this.lastSelectedTeeth[this.currentGroupIndex] = selected;
   }
 
   nextForm(): void {
@@ -512,8 +513,11 @@ export class ContreVisiteDentisteComponent implements OnInit {
 
     try {
       const result = await this.rapportDentisteCVService.saveContreVisite(rapports).toPromise();
-      this.reportReference = result.reference;
-      console.log(this.reportReference)
+      const reference = result[0];
+      console.log('Référence du rapport:', reference);
+
+      this.reportReference = reference;
+      console.log(this.reportReference);
       await this.downloadPDF();
       this.resetForm();
       this.openSnackBar('Contre visite successfully created and pdf Generated');

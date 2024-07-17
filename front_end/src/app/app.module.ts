@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,6 +40,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // ou importez l'un des autres modules selon votre choix
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatRadioModule } from '@angular/material/radio';
+import {MatListModule} from '@angular/material/list';
 
 import { AjouterPrestationOpticienComponent } from './Components/Opticien/ajouter-prestation-opticien/ajouter-prestation-opticien.component';
 import { VoirDetailComponent } from './Components/Opticien/voir-detail/voir-detail.component';
@@ -67,6 +69,17 @@ import { PrestationNonfacturesComponent } from './Components/opticienControlleur
 import { BordereauFacturesComponent } from './Components/opticienControlleur/bordereau-factures/bordereau-factures.component';
 import { ReclamationComponent } from './Components/PS/reclamation/reclamation.component';
 import { ListReclamationComponent } from './Components/Admin/liste-reclamation/liste-reclamation.component';
+import { TokenInterceptorService } from './_helper/token-interceptor.service';
+import { HomeComponent } from './Components/home/home.component';
+import { ListPrestationContreVComponent } from './Components/Admin/Dentiste/list-prestation-contre-v/list-prestation-contre-v.component';
+import { AjouterAssuranceComponent } from './Components/Admin/Assurance/ajouter-assurance/ajouter-assurance.component';
+import { ModifierAssuranceComponent } from './Components/Admin/Assurance/modifier-assurance/modifier-assurance.component';
+import { ListAssuranceComponent } from './Components/Admin/Assurance/list-assurance/list-assurance.component';
+import { HistoriquePrestationComponent } from './Components/Dentiste/historique-prestation/historique-prestation.component';
+import { HistoriquePrestationOptComponent } from './Components/Opticien/historique-prestation-opt/historique-prestation-opt.component';
+import { AjouterReclamationComponent } from './Components/Ps/ajouter-reclamation/ajouter-reclamation.component';
+import { ListBordereauContreVisiteComponent } from './Components/Admin/Bordereau/list-bordereau-contre-visite/list-bordereau-contre-visite.component';
+import { ChangePasswordComponent } from './Components/User/change-password/change-password.component';
 
 
 @NgModule({
@@ -113,7 +126,18 @@ import { ListReclamationComponent } from './Components/Admin/liste-reclamation/l
     PrestationNonfacturesComponent,
     BordereauFacturesComponent,
     ReclamationComponent,
-    ListReclamationComponent
+    ListReclamationComponent,
+    HomeComponent,
+    ListPrestationContreVComponent,
+    AjouterAssuranceComponent,
+    ModifierAssuranceComponent,
+    ListAssuranceComponent,
+    HistoriquePrestationComponent,
+    HistoriquePrestationOptComponent,
+    AjouterReclamationComponent,
+    ListBordereauContreVisiteComponent,
+    ChangePasswordComponent,
+
 
 
   ],
@@ -140,9 +164,10 @@ import { ListReclamationComponent } from './Components/Admin/liste-reclamation/l
     MatDatepickerModule,
     MatNativeDateModule,
     MatSidenavModule,
-
+    MatRadioModule,
+    MatListModule
   ],
-  providers: [],
+  providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptorService,multi:true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

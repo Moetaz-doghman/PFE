@@ -32,18 +32,19 @@ export class AjoutRapportComponent implements OnInit {
     this.getPrestationDetail();
     this.rapportForm = this.fb.group({
       observation: ['', Validators.required],
-      sphereD: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      axeD: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      acuiteD: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      sphereG: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      axeG: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      acuiteG: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      valeurVerreMin: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      valeurVerreMax: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      prixMontureMin: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-      prixMontureMax: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      sphereD: ['', [Validators.required]],
+      axeD: ['', [Validators.required]],
+      acuiteD: ['', [Validators.required]],
+      sphereG: ['', [Validators.required]],
+      axeG: ['', [Validators.required]],
+      acuiteG: ['', [Validators.required]],
+      valeurVerreMin: ['', [Validators.required]],
+      valeurVerreMax: ['', [Validators.required]],
+      prixMontureMin: ['', [Validators.required]],
+      prixMontureMax: ['', [Validators.required]],
       natureVerre: ['', Validators.required]
     });
+
 
   }
 
@@ -55,12 +56,11 @@ export class AjoutRapportComponent implements OnInit {
         .subscribe(response => {
           console.log(response);
           this.rapportForm.reset();
-          this.router.navigate(['/menu/optc/prestationCOntreVisite']);
+          this.router.navigate(['/menu/optc/prestationCOntreVisite'], { queryParamsHandling: 'preserve' });
         }, error => {
           console.log(error);
         });
 
-        this.router.navigate(['/menu/optc/prestationCOntreVisite']);
 
     }
   }

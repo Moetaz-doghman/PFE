@@ -1,90 +1,70 @@
-<div class="card">
+<div class="card" *ngIf="reclamations && reclamations.length > 0; else noReclamations">
+  <div class="card-body">
+    <h2 class="card-title text-center mb-4">Mes réclamations</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Date de creation</th>
+            <th scope="col">Type</th>
+            <th scope="col">Convention</th>
+            <th scope="col">Qualification</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <!-- Corps du tableau -->
+        <tbody>
+          <tr *ngFor="let reclamation of reclamations">
+            <td>{{ reclamation.dateCreation }}</td>
+            <td>{{ reclamation.type }}</td>
+            <td>{{ reclamation.convention }}</td>
+            <td>{{ reclamation.qualifications }}</td>
+            <td>{{ reclamation.statut }}</td>
+            <td>
+              <button class="btn btn-danger" (click)="confirmDelete(reclamation)" data-bs-toggle="modal"
+                data-bs-target="#deleteConfirmationModal">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="btn btn-success" (click)="goToAdd()">
+      <i class="fas fa-arrow-left"></i> Ajouter réclamation
+    </button>
+  </div>
+</div>
+
+<ng-template #noReclamations>
+  <div class="card">
     <div class="card-body">
       <h2 class="card-title text-center mb-4">Mes réclamations</h2>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-          <thead class="bg-light">
-            <tr>
-                <th scope="col">Date de creation</th>
-              <th scope="col">Titre</th>
-              <th scope="col">Status</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <!-- Corps du tableau -->
-          <tbody>
-            <tr *ngFor="let reclamation of reclamations">
-              <td>{{ reclamation.dateCreation }}</td>
-              <td>{{ reclamation.titre }}</td>
-              <td>{{ reclamation.statut}}</td>
-              <td>
-                <button class="btn btn-danger" (click)="confirmDelete(reclamation)"  data-bs-toggle="modal"
-                  data-bs-target="#deleteConfirmationModal">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createReclamationModal">
-        <i class="fas fa-arrow-left"></i> Ajouter reclamation
+      <p class="text-center">Aucune réclamation jusqu'à maintenant.</p>
+      <button class="btn btn-success" (click)="goToAdd()">
+        <i class="fas fa-arrow-left"></i> Ajouter réclamation
       </button>
     </div>
   </div>
-  
-  
-  <!-- Modèle de confirmation de suppression -->
-  <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmer la suppression</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Êtes-vous sûr de vouloir supprimer cet réclamation ?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-danger"  (click)="deleteReclamation()"
-            data-bs-dismiss="modal">Supprimer</button>
-        </div>
+</ng-template>
+
+<!-- Modèle de confirmation de suppression -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmer la suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer cette réclamation ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="deleteReclamation()" data-bs-dismiss="modal">Supprimer</button>
       </div>
     </div>
   </div>
-
-  
-  <!-- Modèle de création de réclamation -->
-<div class="modal fade" id="createReclamationModal" tabindex="-1" aria-labelledby="createReclamationModalLabel"
-aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="createReclamationModalLabel">Créer une nouvelle réclamation</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="titre" class="form-label">Titre</label>
-          <input type="text" id="titre" class="form-control" formControlName="titre">
-          <div *ngIf="reclamationForm.get('titre').invalid && reclamationForm.get('titre').touched" class="text-danger">
-            Le titre est obligatoire.
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="description" class="form-label">Description</label>
-          <textarea id="description" class="form-control" formControlName="description"></textarea>
-          <div *ngIf="reclamationForm.get('description').invalid && reclamationForm.get('description').touched" class="text-danger">
-            La description est obligatoire.
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" [disabled]="reclamationForm.invalid">Créer Réclamation</button>
-      </form>
-    </div>
-  </div>
 </div>
-</div>
-  

@@ -4,34 +4,37 @@
       <div class="container mt-4">
         <div class="custom-navbar">
           <button class="btn btn-primary btn-rounded-rectangle-rounded-right active" type="button"
-            id="ordonnanceNonFacture" routerLink="/menu/dent/ordonnance-non-facturee">Ordonnance non facturée</button>
-            <button class="btn btn-primary btn-rounded-rectangle-rounded-right" type="button" id="bordereauFacture"
-            routerLink="/menu/opt/bordereau-facture">Bordereau de facture</button>
+            id="ordonnanceNonFacture"
+            [routerLink]="userRoleRoute === 'ROLE_OPTICIEN' ? '/menu/opt/ordonnance-non-facturee' : userRoleRoute === 'ROLE_DENTIST' ? '/menu/dent/ordonnance-non-facturee' : ''">
+            Prestation non facturée
+          </button>
+          <button class="btn btn-primary btn-rounded-rectangle-rounded-right" type="button" id="bordereauFacture"
+            [routerLink]="userRoleRoute === 'ROLE_OPTICIEN' ? '/menu/opt/bordereau-facture' : userRoleRoute === 'ROLE_DENTIST' ? '/menu/dent/bordereau-facture' : ''">
+            Bordereau de facture
+          </button>
         </div>
         <div class="navbar-line"></div>
 
-       <div class="row mt-3">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="startDate">Date de début :</label>
-                    <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="endDate">Date de fin :</label>
-                    <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="filterButton" class="invisible">Filtrer</label>
-                    <button class="btn btn-primary w-100 mt-2" id="filterButton" (click)="filterByDate()">Filtrer</button>
-                  </div>
-                </div>
-              </div>
+        <div class="row mt-3 border border-secondary p-3 rounded">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="startDate">Date de début :</label>
+              <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="endDate">Date de fin :</label>
+              <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="filterButton" class="invisible">Filtrer</label>
+              <button class="btn btn-primary w-100 " id="filterButton" (click)="filterByDate()">Filtrer</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -92,7 +95,7 @@
           </table>
           <div class="form-group col-md-12 d-flex justify-content-between">
             <button class="btn btn-primary" id="validateButton" (click)="validateSelection()"
-              [disabled]="!isAnyPrestationSelected()">Valider</button>
+              [disabled]="!isAnyPrestationSelected()">Generer bordereau</button>
             <mat-paginator [length]="500" [pageSize]="5" [pageSizeOptions]="pageSizeOptions"
               (page)="onPageChange($event)" [pageIndex]="currentPage" [showFirstLastButtons]="true"></mat-paginator>
           </div>

@@ -23,7 +23,8 @@ export class ListBordereauComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   currentPage = 0;
   nouveauStatut: string = '';
-
+  prestataires: string[] = [];
+  selectedPrestataire: string | null = null;
 
   constructor(
     private bordereauService: BordereauService,
@@ -37,14 +38,9 @@ export class ListBordereauComponent implements OnInit {
   getBordereaux(): void {
     this.bordereauService.getAllBordereaux().subscribe(
       (response) => {
-        this.bordereaux = response;
-        this.bordereaux.forEach(bordereau => {
-          bordereau.dateCreationF = new Date(moment(bordereau.dateCreationF).format('L'));
-        });
-        console.log(response);
-        this.dataSource.data = this.bordereaux;
-        this.dataSource.data = this.bordereaux.slice(0, this.pageSize);
-        this.totalItems = this.bordereaux.length;
+        this.bordereaux = response.filter(bordereau => bordereau.type === 'Ordinaire');
+        this.prestataires = this.getUniquePrestataires();
+        this.filterBordereaux();
       },
       (error) => {
         console.error('Error fetching bordereaux:', error);
@@ -52,8 +48,24 @@ export class ListBordereauComponent implements OnInit {
     );
   }
 
+  getUniquePrestataires(): string[] {
+    const prestataires = this.bordereaux.map(bordereau => bordereau.prestations[0].user.nom + ' ' + bordereau.prestations[0].user.prenom);
+    return [...new Set(prestataires)];
+  }
+
+  filterBordereaux(): void {
+    let filteredBordereaux = this.bordereaux;
+    if (this.selectedPrestataire) {
+      filteredBordereaux = this.bordereaux.filter(bordereau => {
+        const prestataire = bordereau.prestations[0].user.nom + ' ' + bordereau.prestations[0].user.prenom;
+        return prestataire === this.selectedPrestataire;
+      });
+    }
+    this.dataSource.data = filteredBordereaux.slice(0, this.pageSize);
+    this.totalItems = filteredBordereaux.length;
+  }
+
   deleteBorderau(): void {
-    console.log(this.selectedBordereaux)
     if (this.selectedBordereaux) {
       this.bordereauService
         .deleteBordereau(this.selectedBordereaux.id)
@@ -72,8 +84,6 @@ export class ListBordereauComponent implements OnInit {
     this.selectedBordereaux = bordereau;
   }
 
-
-
   onPageChange(event: PageEvent) {
     const startIndex = event.pageIndex * event.pageSize;
     const endIndex = startIndex + event.pageSize;
@@ -86,7 +96,6 @@ export class ListBordereauComponent implements OnInit {
   }
 
   changerStatutBordereau(bordereau: Bordereaux): void {
-    console.log(this.nouveauStatut)
     if (this.nouveauStatut && bordereau) {
       this.bordereauService
         .changerStatutBordereau(bordereau.id, this.nouveauStatut)
@@ -94,7 +103,7 @@ export class ListBordereauComponent implements OnInit {
           () => {
             console.log('Statut du bordereau modifié avec succès');
             this.getBordereaux();
-
+            window.location.reload();
           },
           (error: any) => {
             console.error('Erreur lors de la modification du statut du bordereau:', error);
@@ -105,7 +114,10 @@ export class ListBordereauComponent implements OnInit {
 
   selectBordereau(bordereau: Bordereaux): void {
     this.selectedBordereaux = bordereau;
-    // Réinitialiser le statut sélectionné à celui du bordereau
     this.nouveauStatut = bordereau.status;
+  }
+
+  onPrestataireChange(): void {
+    this.filterBordereaux();
   }
 }

@@ -25,7 +25,6 @@ export class AjoiuterAdherantComponent implements OnInit {
   
     this.adherantForm = this.fb.group({
       cin: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]],
-      matricule: ['', Validators.required],
       nom: ['', [Validators.required, Validators.pattern(/^[a-zA-Z]+$/)]],
       prenom: ['', [Validators.required, Validators.pattern(/^[a-zA-Z]+$/)]],
       sexe: ['', Validators.required],
@@ -33,6 +32,7 @@ export class AjoiuterAdherantComponent implements OnInit {
       dateNais: ['', Validators.required],
       gouvNais: ['', Validators.required],  
       paysNais: ['', Validators.required],
+      email: ['', Validators.required],
       plafond: ['', Validators.required],
       assuranceId: [0 , Validators.required],
     });

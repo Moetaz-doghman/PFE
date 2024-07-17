@@ -14,6 +14,9 @@ import autoTable from 'jspdf-autotable';
 import * as qrcode from 'qrcode';
 import { parse } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { User } from 'src/app/Models/User';
+import { Role } from 'src/app/Models/Role';
+import { AuthServiceService } from 'src/app/Services/auth-service.service';
 
 @Component({
   selector: 'app-bordereau-facture',
@@ -39,17 +42,47 @@ export class BordereauFactureComponent implements OnInit {
   donneesAdherent: any[];
   qrCodeURL: string;
   showSecondContainer: boolean = false;
-
   currentPage = 0;
+  userRole: string;
+  user: User;
+  userRoleRoute: string;
+
 
   constructor(
     private storageService: StorageServiceService,
     private snackBar: MatSnackBar,
-    private bordereauService: BordereauService
+    private bordereauService: BordereauService,
+    private authService: AuthServiceService
+
   ) {}
 
   ngOnInit(): void {
     this.getBordereaux();
+    this.user = this.storageService.getUser();
+    this.setUserRole();
+    this.setUserRoleRoute();
+
+
+  }
+
+
+  setUserRoleRoute(): void {
+    if (this.authService.HaveAccessOpt1()) {
+      this.userRoleRoute = 'ROLE_OPTICIEN';
+    } else if (this.authService.HaveAccessDent1()) {
+      this.userRoleRoute = 'ROLE_DENTIST';
+    } else {
+      this.userRoleRoute = 'NO_ACCESS';
+    }
+  }
+
+
+  setUserRole(): void {
+    if (this.user.roles.some((role: Role) => role.name === 'ROLE_OPTICIEN')) {
+      this.userRole = 'ROLE_OPTICIEN';
+    } else if (this.user.roles.some((role: Role) => role.name === 'ROLE_DENTIST')) {
+      this.userRole = 'ROLE_DENTIST';
+    }
   }
 
   getBordereaux() {
@@ -102,7 +135,7 @@ export class BordereauFactureComponent implements OnInit {
     }
 
     this.filteredBordereaux = this.bordereaux.filter((bordereaux) => {
-      const bordereauxDate = parse(bordereaux.dateCreationF.toString(), 'd MMM yyyy', new Date(), { locale: fr });
+      const bordereauxDate = new Date(bordereaux.dateCreationF);
       return bordereauxDate >= startDate && bordereauxDate <= endDate;
     });
 

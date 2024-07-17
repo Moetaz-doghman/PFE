@@ -47,6 +47,13 @@ export class AdherantService {
       return this.http.delete<void>(`${this.baseUrl}/${id}`);
     }
 
+    desactiverAdherant(adherantId: number): Observable<string> {
+      return this.http.put<string>(`${this.baseUrl}/disable/${adherantId}`, {});
+    }
+  
+    activerAdherant(adherantId: number): Observable<string> {
+      return this.http.put<string>(`${this.baseUrl}/able/${adherantId}`, {});
+    }
 
 }
 

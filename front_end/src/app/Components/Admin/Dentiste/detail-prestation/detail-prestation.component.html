@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div  *ngIf="prestation.actes.length !== 0">
         <h4>Actes associés</h4>
         <div class="actes">
           <span class="badge bg-secondary" *ngFor="let acte of prestation.actes">

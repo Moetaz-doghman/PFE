@@ -6,6 +6,7 @@ import { Prestation } from 'src/app/Models/Prestation';
 import { BordereauService } from 'src/app/Services/bordereau.service';
 import { PrestationService } from 'src/app/Services/prestation-service.service';
 import { StorageServiceService } from 'src/app/Services/storage-service.service';
+import { AuthServiceService } from '../../../Services/auth-service.service';
 
 @Component({
   selector: 'app-prestation-nonfactures',
@@ -25,16 +26,38 @@ export class PrestationNonfacturesComponent   implements OnInit {
   filterApplied: boolean = false;
   today: Date = new Date();
   currentPage = 0;
+  userRoleRoute: string;
   constructor(
     private prestationService: PrestationService,
     private storageService: StorageServiceService,
     private snackBar: MatSnackBar,
-    private bordereauService: BordereauService
+    private bordereauService: BordereauService,
+    private authService :AuthServiceService
   ) {}
 
   ngOnInit(): void {
     this.getPrestationsByUser();
+    this.setUserRoleRoute();
+
   }
+
+
+  setUserRoleRoute(): void {
+    if (this.authService.HaveAccessDentC1()) {
+      this.userRoleRoute = 'ROLE_DENTIST_CONTROLEUR';
+    } else if (this.authService.HaveAccessOptC1()) {
+      this.userRoleRoute = 'ROLE_OPTICIEN_CONTROLEUR';
+    } else {
+      this.userRoleRoute = 'NO_ACCESS';
+    }
+  }
+
+
+
+
+
+
+
 
   getPrestationsByUser() {
     this.prestationService
@@ -76,6 +99,8 @@ export class PrestationNonfacturesComponent   implements OnInit {
   }
 
   filterByDate() {
+    console.log(this.startDate)
+    console.log(this.today)
     if (!this.startDate) {
       this.openSnackBar('Veuillez sélectionner une date de début.');
       return;
@@ -134,7 +159,8 @@ export class PrestationNonfacturesComponent   implements OnInit {
   }
 
   isAnyPrestationSelected(): boolean {
-    return this.dataSource.data.some((prestation) => prestation.selected);
+    return this.dataSource.data.filter((prestation) => prestation.selected).length >= 2;
+
   }
 }
 

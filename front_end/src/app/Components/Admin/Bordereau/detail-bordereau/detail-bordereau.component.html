@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="details-section">
+          <div class="details-section" *ngIf="bordereau.type === 'Ordinaire'" >
             <h4>Informations sur les prestations</h4>
             <div *ngIf="bordereau && bordereau.prestations">
               <div *ngFor="let prestation of bordereau.prestations">

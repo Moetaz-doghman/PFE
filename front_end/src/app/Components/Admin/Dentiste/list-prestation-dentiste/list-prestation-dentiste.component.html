@@ -1,9 +1,9 @@
 <div class="card">
   <div class="card-body">
     <h2 class="card-title text-center mb-4">
-      Liste des prestations avec actes
+      Liste des prestations ordinaire  avec actes
     </h2>
-    <!-- Sélecteur de rôle -->
+    
     <div class="input-group mb-3">
       <label class="input-group-text" for="roleSelect">Sélectionner un rôle</label>
       <select class="form-select" id="roleSelect" [(ngModel)]="selectedRole" (change)="applyFilter()">
@@ -14,7 +14,7 @@
       </select>
     </div>
 
-    <!-- Champ de recherche par matricule d'adhérent -->
+    
     <div class="input-group mb-3">
       <span class="input-group-text">
         <i class="fas fa-search"></i>
@@ -22,7 +22,7 @@
       <input type="text" class="form-control" placeholder="Rechercher par matricule d'adhérent"
         [(ngModel)]="searchMatricule" (keyup)="applyMatriculeFilter()" />
     </div>
-    <!-- Table -->
+    
     <div class="table-responsive">
       <table class="table table-bordered table-striped align-middle">
         <thead class="bg-light">
@@ -70,13 +70,14 @@
             <ng-container *ngIf="!prestation.beneficiaire">
               <td colspan="3" class="text-center">Pas d'Informations</td>
             </ng-container>
-            <td>
+            <td [ngClass]="{'striped': prestation.actes.length === 0}">
               <ul class="list-unstyled">
                 <li *ngFor="let acte of prestation.actes">
-                  <span class="badge" [ngClass]="getRoleBadgeClass(acte.nom)">{{
-                    acte.nom
-                    }}</span>
+                  <span class="badge" [ngClass]="getRoleBadgeClass(acte.nom)">
+                    {{ acte.nom }}
+                  </span>
                 </li>
+                <li *ngIf="prestation.actes.length === 0" class="text-center">----</li>
               </ul>
             </td>
             <td>
@@ -93,15 +94,17 @@
             </td>
 
             <td *ngIf="affecterContreVisite(prestation)">
-              <button class="btn btn-primary rounded-pill py-2 px-4" 
-        data-bs-toggle="modal" 
-        data-bs-target="#voirdetails" 
-        (click)="showDetails(prestation)">
-    <span class="d-inline d-md-none">Affecter contre visite</span>
-    <span class="d-none d-md-inline">Affecter contre visite maintenant</span>
-</button>
+              <button class="btn btn-primary rounded-pill py-2 px-4" data-bs-toggle="modal"
+                data-bs-target="#voirdetails" (click)="showDetails(prestation)">
+                <!-- <span class="d-inline d-md-none">Affecter contre visite</span> -->
+                <span class="d-none d-md-inline">Affecter contre visite maintenant</span>
+              </button>
             </td>
-            <!-- <td *ngIf="!affecterContreVisite(prestation)">déja affecté </td> -->
+            <td *ngIf="!affecterContreVisite(prestation)  && prestation.montantTotal > 200">
+              affecté chez {{ prestation.professionalName }}
+          </td>
+          <td  *ngIf=" prestation.montantTotal <= 200" [ngClass]="{'striped': prestation.montantTotal <= 200 }">
+        </td>
 
           </tr>
         </tbody>
@@ -132,7 +135,7 @@
   </div>
 
 </div>
-<!-- Modal -->
+
 <div class="modal fade" id="voirdetails" tabindex="-1" aria-labelledby="voirdetailsLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -144,18 +147,21 @@
         <form>
           <div class="mb-3">
             <label for="healthcareProfessional" class="form-label">Professionnel de santé :</label>
-            <select id="healthcareProfessional" class="form-select" [(ngModel)]="selectedHealthcareProfessionalId" name="healthcareProfessional">
-              <option  value=""> slectionner un ps  </option>
+            <select id="healthcareProfessional" class="form-select" [(ngModel)]="selectedHealthcareProfessionalId"
+              name="healthcareProfessional">
+              <option value=""> slectionner un ps </option>
               <option *ngFor="let professional of usersByRole" [value]="professional.id">{{ professional.nom }}</option>
             </select>
-            <div *ngIf="!selectedHealthcareProfessionalId && formSubmitted" class="text-danger">Vous devez sélectionner un professionnel de santé.</div>
+            <div *ngIf="!selectedHealthcareProfessionalId && formSubmitted" class="text-danger">Vous devez sélectionner
+              un professionnel de santé.</div>
 
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary" (click)="submitForm()" [disabled]="!selectedHealthcareProfessionalId"  data-bs-dismiss="modal">Affecter</button>
+        <button type="button" class="btn btn-primary" (click)="submitForm()"
+          [disabled]="!selectedHealthcareProfessionalId" data-bs-dismiss="modal">Affecter</button>
       </div>
     </div>
   </div>
@@ -169,7 +175,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p *ngIf="selectedHealthcareProfessionalId">Voulez-vous vraiment affecter cette prestation au professionnel de santé sélectionné {{ps.nom}} {{ps.prenom}}</p>
+        <p *ngIf="selectedHealthcareProfessionalId">Voulez-vous vraiment affecter cette prestation au professionnel de
+          santé sélectionné {{ps.nom}} {{ps.prenom}}</p>
         <p *ngIf="selectedHealthcareProfessionalId">Si oui, un mail sera envoyé</p>
         <div class="text-center" *ngIf="isLoading">
           <div class="spinner-border" role="status">
@@ -179,18 +186,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary" (click)="validateAffectation()" [disabled]="isLoading">Valider</button>
+        <button type="button" class="btn btn-primary" (click)="validateAffectation()"
+          [disabled]="isLoading">Valider</button>
       </div>
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-

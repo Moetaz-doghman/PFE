@@ -1,0 +1,46 @@
+<div class="container mt-4">
+  <h3 class="mb-4">Ajouter une assurance</h3>
+  <form [formGroup]="assuranceForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="nom" formControlName="nom" [ngClass]="{'is-invalid': assuranceForm.get('nom').invalid && assuranceForm.get('nom').touched}">
+        <div *ngIf="assuranceForm.get('nom').invalid && assuranceForm.get('nom').touched" class="invalid-feedback">
+          Nom est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="prix_cotation" class="form-label">Prix Cotation Soins Dentaires <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="prix_cotation" formControlName="prix_cotation" [ngClass]="{'is-invalid': assuranceForm.get('prix_cotation').invalid && assuranceForm.get('prix_cotation').touched}">
+        <div *ngIf="assuranceForm.get('prix_cotation').invalid && assuranceForm.get('prix_cotation').touched" class="invalid-feedback">
+          Prix Cotation est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="prix_cotationODF" class="form-label">Prix Cotation ODF <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="prix_cotationODF" formControlName="prix_cotationODF" [ngClass]="{'is-invalid': assuranceForm.get('prix_cotationODF').invalid && assuranceForm.get('prix_cotationODF').touched}">
+        <div *ngIf="assuranceForm.get('prix_cotationODF').invalid && assuranceForm.get('prix_cotationODF').touched" class="invalid-feedback">
+          Prix Cotation ODF est obligatoire
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="prix_cotationProthese" class="form-label">Prix Cotation Prothèse <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="prix_cotationProthese" formControlName="prix_cotationProthese" [ngClass]="{'is-invalid': assuranceForm.get('prix_cotationProthese').invalid && assuranceForm.get('prix_cotationProthese').touched}">
+        <div *ngIf="assuranceForm.get('prix_cotationProthese').invalid && assuranceForm.get('prix_cotationProthese').touched" class="invalid-feedback">
+          Prix Cotation Prothèse est obligatoire
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-success" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary me-2" [disabled]="assuranceForm.invalid">Ajouter</button>
+          <button type="button" class="btn btn-secondary" (click)="onReset()">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -40,6 +40,7 @@ export interface Prestation {
   beneficiaire : Beneficiaire;
   montant_ticket_moderateur: number;
   cle_cotation : string;
+  professionalName:String
   selected?: boolean;
   disabled?: boolean;
 

@@ -7,15 +7,18 @@ import { Injectable } from '@angular/core';
 })
 export class OpticienControleurGuard implements CanActivate {
 
-  constructor(private authService: AuthServiceService, private router: Router) {}
+ 
+  constructor(
+    private authService: AuthServiceService,
+    private router: Router
+  ) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean | UrlTree {
-    if (this.authService.isOpticienControleur()) {
+  canActivate(): boolean {
+    if (this.authService.HaveAccessOptC()) {
       return true;
     } else {
-      return this.router.parseUrl('/login');
+      this.router.navigate(['']);
+      return false;
     }
   }
 }

@@ -5,8 +5,11 @@ export interface Reclamation {
 
     id: number;
     titre: string;
+    type: string;
+    convention : string;
+    qualifications: string;
     description: string;
     dateCreation: Date;
-    statut: EReclamationStatus; 
+    statut: EReclamationStatus;
     user: User;
 }

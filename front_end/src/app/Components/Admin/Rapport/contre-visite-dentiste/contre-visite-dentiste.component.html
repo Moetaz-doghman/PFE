@@ -8,17 +8,13 @@
       <div class="predefined-fields" *ngFor="let prestation of groupedPrestations[currentGroupIndex].prestations">
         <div class="field">
           <span>M/Mme/Mlle:</span>
-          <span *ngIf="prestation.beneficiaire == null ">{{ prestation.adherant.nom }} {{ prestation.adherant.prenom
-            }}</span>
-          <span *ngIf="prestation.beneficiaire != null ">{{ prestation.beneficiaire.nom }} {{
-            prestation.beneficiaire.prenom }}</span>
+          <span *ngIf="prestation.beneficiaire == null ">{{ prestation.adherant.nom }} {{ prestation.adherant.prenom }}</span>
+          <span *ngIf="prestation.beneficiaire != null ">{{ prestation.beneficiaire.nom }} {{ prestation.beneficiaire.prenom }}</span>
         </div>
         <div class="field">
           <span>Prestataire:</span>
-          <span *ngIf="prestation.beneficiaire == null ">{{ prestation.adherant.nom }} {{ prestation.adherant.prenom
-            }}</span>
-          <span *ngIf="prestation.beneficiaire != null ">{{ prestation.beneficiaire.nom }} {{
-            prestation.beneficiaire.prenom }}</span>
+          <span *ngIf="prestation.beneficiaire == null ">{{ prestation.adherant.nom }} {{ prestation.adherant.prenom }}</span>
+          <span *ngIf="prestation.beneficiaire != null ">{{ prestation.beneficiaire.nom }} {{ prestation.beneficiaire.prenom }}</span>
         </div>
         <div class="field">
           <span>Adhésion:</span>
@@ -72,8 +68,7 @@
 
       <mat-form-field class="form-field col-md-10 mx-auto">
         <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="picker" placeholder="Choisissez une date" [(ngModel)]="selectedDate"
-          (dateChange)="updateButtonStatus()">
+        <input matInput [matDatepicker]="picker" placeholder="Choisissez une date" [(ngModel)]="selectedDate" (dateChange)="updateButtonStatus()">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -97,7 +92,7 @@
   <div class="card">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand mr-auto" href="#">
-        <img src="assets/images/logo.png" width="100" height="50" class="d-inline-block align-top" alt="">
+        <img src="../../../assets/images/medicare2.png" width="100" height="100" class="d-inline-block align-top" alt="">
       </a>
       <span class="navbar-text mx-auto mx-3">
         <h2>Rapport de contre visite</h2>

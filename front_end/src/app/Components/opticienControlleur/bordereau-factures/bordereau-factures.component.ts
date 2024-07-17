@@ -8,6 +8,7 @@ import { StorageServiceService } from 'src/app/Services/storage-service.service'
 import * as qrcode from 'qrcode';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { AuthServiceService } from 'src/app/Services/auth-service.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ import jsPDF from 'jspdf';
   styleUrls: ['./bordereau-factures.component.css']
 })
 export class BordereauFacturesComponent  implements OnInit {
-  
+
   bordereaux: Bordereaux[] = [];
   dataSource = new MatTableDataSource<Bordereaux>([]);
   totalItems = 0;
@@ -35,15 +36,30 @@ export class BordereauFacturesComponent  implements OnInit {
   qrCodeURL: string;
   showSecondContainer: boolean = false;
   currentPage = 0;
+  userRoleRoute: string;
+
 
   constructor(
     private storageService: StorageServiceService,
     private snackBar: MatSnackBar,
-    private bordereauService: BordereauService
+    private bordereauService: BordereauService,
+    private authService :AuthServiceService
   ) {}
 
   ngOnInit(): void {
     this.getBordereaux();
+    this.setUserRoleRoute();
+
+  }
+
+  setUserRoleRoute(): void {
+    if (this.authService.HaveAccessDentC1()) {
+      this.userRoleRoute = 'ROLE_DENTIST_CONTROLEUR';
+    } else if (this.authService.HaveAccessOptC1()) {
+      this.userRoleRoute = 'ROLE_OPTICIEN_CONTROLEUR';
+    } else {
+      this.userRoleRoute = 'NO_ACCESS';
+    }
   }
 
   getBordereaux() {
@@ -147,7 +163,7 @@ export class BordereauFacturesComponent  implements OnInit {
     this.donneesAdherent = this.getPrestationData(bordereau);
 
     this.downloadingPDF = true;
-    const qrData = `Référence: ${bordereau.refNumber}, Numéro de facture: ${bordereau.numFacture}`;
+    const qrData = `Référence: ${bordereau.refNumber}, Numéro de facture: ${bordereau.ref}`;
     qrcode.toDataURL(qrData, { errorCorrectionLevel: 'H' }, (err, url) => {
       if (err) {
         console.error('Erreur lors de la génération du QR code :', err);
