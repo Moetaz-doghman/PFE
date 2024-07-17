@@ -18,13 +18,13 @@ import java.util.Map;
 public class RapportDentisteController {
 
     private final RapportDentisteImplm rapportDentisteImplm;
-     @PostMapping("/rapports")
-     public List<Rapport_C_V_Dentaire> addRapportDentaire(@RequestBody List<RapportDentaireDTO> dtos) {
-         return rapportDentisteImplm.addRapportDentaire(dtos);
-     }
+    @PostMapping("/rapports")
+    public List<String> addRapportDentaire(@RequestBody List<RapportDentaireDTO> dtos) {
+        return rapportDentisteImplm.addRapportDentaire(dtos);
+    }
 
-    @GetMapping("/getCombinedRapports")
-    public List<CombinedRapportDTO> getCombinedRapports() {
-        return rapportDentisteImplm.getCombinedRapports();
+    @GetMapping("/getCombinedRapports/{userId}")
+    public List<CombinedRapportDTO> getCombinedRapports(@PathVariable Long userId) {
+        return rapportDentisteImplm.getCombinedRapports(userId);
     }
 }

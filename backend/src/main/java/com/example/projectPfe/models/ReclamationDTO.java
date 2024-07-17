@@ -14,6 +14,9 @@ public class ReclamationDTO {
     private int id;
     private String titre;
     private String description;
+    private String type ;
+    private String convention ;
+    private String qualifications;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date dateCreation;
     private EStatusReclamation statut;

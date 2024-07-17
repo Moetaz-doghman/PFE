@@ -4,27 +4,16 @@ import com.example.projectPfe.Services.Interface.AssuranceService;
 import com.example.projectPfe.models.Assurance;
 import com.example.projectPfe.repository.AssuranceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 @Service
-@RequiredArgsConstructor
 public class AssuranceServiceImplm implements AssuranceService {
 
-    private  final AssuranceRepository assuranceRepository;
-
-
-
-    @Override
-    public Assurance ajouterAssurance(Assurance assurance) {
-        return assuranceRepository.save(assurance);
-    }
-
-    @Override
-    public Optional<Assurance> getAssuranceById(int id) {
-        return assuranceRepository.findById(id);
-    }
+    @Autowired
+    private AssuranceRepository assuranceRepository;
 
     @Override
     public List<Assurance> getAllAssurances() {
@@ -32,17 +21,26 @@ public class AssuranceServiceImplm implements AssuranceService {
     }
 
     @Override
-    public Assurance modifierAssurance(int id, Assurance assurance) {
-        if (assuranceRepository.existsById(id)) {
-            assurance.setNom(assurance.getNom());
-            return assuranceRepository.save(assurance);
-        } else {
-            throw new RuntimeException("Assurance not found with id: " + id);
-        }
+    public Assurance getAssuranceById(int id) {
+        return assuranceRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void supprimerAssurance(int id) {
+    public Assurance createAssurance(Assurance assurance) {
+        return assuranceRepository.save(assurance);
+    }
+
+    @Override
+    public Assurance updateAssurance(int id, Assurance assurance) {
+        if (assuranceRepository.existsById(id)) {
+            assurance.setId(id);
+            return assuranceRepository.save(assurance);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteAssurance(int id) {
         assuranceRepository.deleteById(id);
     }
 }

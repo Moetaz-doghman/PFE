@@ -35,6 +35,7 @@ public class Adherant {
         private String paysNais;
         private String email ;
         private float plafond;
+        private Boolean active;
 
         @OneToMany(mappedBy = "adherant")
         @JsonIgnore
@@ -45,6 +46,16 @@ public class Adherant {
         @JoinColumn(name = "id_assurance")
         private Assurance assurance;
 
+        public boolean isActive() {
+                return active;
+        }
 
+        public void desactiverAdherant() {
+                this.active = false;
+        }
+
+        public void activerAdherant() {
+                this.active = true;
+        }
 
 }

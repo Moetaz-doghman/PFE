@@ -7,9 +7,10 @@ import java.util.Optional;
 
 public interface AssuranceService {
 
-    Assurance ajouterAssurance(Assurance assurance);
-    Optional<Assurance> getAssuranceById(int id);
     List<Assurance> getAllAssurances();
-    Assurance modifierAssurance(int id, Assurance assurance);
-    void supprimerAssurance(int id);
+    Assurance getAssuranceById(int id);
+    Assurance createAssurance(Assurance assurance);
+    Assurance updateAssurance(int id, Assurance assurance);
+    void deleteAssurance(int id);
+
 }

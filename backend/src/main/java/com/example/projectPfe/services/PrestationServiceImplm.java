@@ -35,6 +35,7 @@ public class PrestationServiceImplm implements PrestationService {
 
     private final AssuranceRepository assuranceRepository;
 
+    private final EmailService emailService;
 
     private final JavaMailSender emailSender;
 
@@ -51,8 +52,10 @@ public class PrestationServiceImplm implements PrestationService {
 
         if(prestation.isContreVisite()) {
             prestation.setIdUserControlleur(userId);
-            sendContreVisiteEmail(user.getEmail(), prestation);
-            sendPrestationDetailsEmailForAdherant(user.getEmail(), user);
+            //sendContreVisiteEmail(user.getEmail(), prestation);
+            //sendPrestationDetailsEmailForAdherant(adherant.getEmail(), user);
+            emailService.sendContreVisiteEmail(user.getEmail(), prestation);
+            emailService.sendPrestationDetailsEmailForAdherant(adherant.getEmail(),user);
             return prestationRepository.save(prestation);
         }
         return null;
@@ -388,6 +391,15 @@ public class PrestationServiceImplm implements PrestationService {
         prestationOrdinnaireOpt.setMontantRembourse(montantRembourse);
         prestationOrdinnaireOpt.setContreVisite(prestationOrdinnaireOpt.getMontantTotal()>200);
 
+        float plafond = adherant.getPlafond();
+        float nouveauPlafond = plafond - prestationOrdinnaireOpt.getMontantRembourse();
+
+        if(prestationOrdinnaireOpt.getMontantTotal()< 200){
+            prestationOrdinnaireOpt.setFavore(Efavore.favore);
+        }
+
+        adherant.setPlafond(nouveauPlafond);
+        adherantRepo.save(adherant);
 
         Prestation prestationEnregistree = prestationRepository.save(prestationOrdinnaireOpt);
 
@@ -417,7 +429,6 @@ public class PrestationServiceImplm implements PrestationService {
         float montantTotal = calculerMontantTotal(valeurVerreOeilGauche, valeurVerreOeilDroit, valeurMonture);
         float montantRembourse = montantTotal - 40;
 
-        // Créer une nouvelle prestation
         Prestation prestation = new Prestation();
         prestation.setRef(genererRefOrdinaire());
         prestation.setRefNumber(genererRefNumberOrdinaire());
@@ -443,15 +454,14 @@ public class PrestationServiceImplm implements PrestationService {
         prestation.setMontantRembourse(montantRembourse);
         prestation.setContreVisite(prestation.getMontantTotal()>200);
 
-
-
-        prestation.setContreVisite(prestation.getMontantTotal()>200);
-
         float plafond = beneficiaire.getPlafond();
-        float nouveauPlafond = plafond - montantTotal;
-
+        float nouveauPlafond = plafond - montantRembourse;
         if (nouveauPlafond < 0) {
             throw new RuntimeException("Plafond du benéfiçaire insuffisant pour ajouter la prestation contre visite.");
+        }
+
+        if(prestation.getMontantTotal()< 200){
+            prestation.setFavore(Efavore.favore);
         }
 
         beneficiaire.setPlafond(nouveauPlafond);
@@ -485,7 +495,6 @@ public class PrestationServiceImplm implements PrestationService {
         Utilisateur user = utilisateurRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
-        // Créer une nouvelle prestation
         Prestation prestation = new Prestation();
         prestation.setMontantTotal(montantTotal);
         prestation.setMontantRembourse(montantRembourse);
@@ -522,7 +531,6 @@ public class PrestationServiceImplm implements PrestationService {
         adherant.setPlafond(nouveauPlafond);
 
 
-        // Ajouter les actes dentaires à la prestation
         Set<ActeDentaire> actes = new HashSet<>();
         for (Eacte eacte : actesDentaires) {
             ActeDentaire acteDentaire = acteDentaireRepository.findByNom(eacte);
@@ -557,7 +565,6 @@ public class PrestationServiceImplm implements PrestationService {
             throw new RuntimeException("Erreur: Le bénéficiaire n'est pas lié à cet adhérent");
         }
 
-        // Créer une nouvelle prestation
         Prestation prestation = new Prestation();
         prestation.setMontantTotal(montantTotal);
         prestation.setMontantRembourse(montantRembourse);
@@ -616,7 +623,43 @@ public class PrestationServiceImplm implements PrestationService {
 
     @Override
     public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenef() {
-        List<Prestation> prestations = prestationRepository.findAllWithActes();
+        List<Prestation> prestations = prestationRepository.findAllWithActesAndTypeOrdinare();
+        List<PrestationWithBeneficiaireDTO> dtos = new ArrayList<>();
+
+        for (Prestation prestation : prestations) {
+            PrestationWithBeneficiaireDTO dto = new PrestationWithBeneficiaireDTO();
+            dto.setId(prestation.getId());
+            dto.setDateCreation(prestation.getDateCreation());
+            dto.setEtat(prestation.isEtat());
+            dto.setStatut(prestation.isStatut());
+            dto.setMontantTotal(prestation.getMontantTotal());
+            dto.setMontantRembourse(prestation.getMontantRembourse());
+            dto.setMontant_ticket_moderateur(prestation.getMontant_ticket_moderateur());
+            dto.setType(prestation.getType());
+            dto.setCle_cotation(prestation.getCle_cotation());
+            dto.setTotalCotation(prestation.getTotalCotation());
+            dto.setIdUserControlleur(prestation.getIdUserControlleur());
+            dto.setContreVisite(prestation.isContreVisite());
+            dto.setAdherant(prestation.getAdherant());
+            dto.setUser(prestation.getUser());
+
+            if (prestation.getBeneficiaireId() != null) {
+                Beneficiaire beneficiaire = beneficiairRepository.findById(Integer.parseInt(prestation.getBeneficiaireId())).orElse(null);
+                dto.setBeneficiaire(beneficiaire);
+            }
+
+            Set<ActeDentaire> actes = new HashSet<>(prestation.getActes());
+            dto.setActes(actes);
+
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    @Override
+    public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenefAndTypeContreVisite() {
+        List<Prestation> prestations = prestationRepository.findAllWithActesAndTypeContreVisite();
         List<PrestationWithBeneficiaireDTO> dtos = new ArrayList<>();
 
         for (Prestation prestation : prestations) {
@@ -680,13 +723,11 @@ public class PrestationServiceImplm implements PrestationService {
             dto.setUser(prestation.getUser());
             dto.setIdPrestation(prestation.getIdPrestation());
 
-            // Si beneficiaireId est non null, rechercher le beneficiaire associé
             if (prestation.getBeneficiaireId() != null) {
                 Beneficiaire beneficiaire = beneficiairRepository.findById(Integer.parseInt(prestation.getBeneficiaireId())).orElse(null);
                 dto.setBeneficiaire(beneficiaire);
             }
 
-            // Récupérer les actes en utilisant idPrestation
             Set<ActeDentaire> actes = getActesByIdPrestation(prestation.getIdPrestation());
             dto.setActes(actes);
 
@@ -705,16 +746,30 @@ public class PrestationServiceImplm implements PrestationService {
     public CalculationResponse calculate(CalculationRequest request) {
         CalculationResponse response = new CalculationResponse();
 
-        // Récupération des données de l'assurance
         double prixCotation = request.getTotalCotation();
         Assurance assurance = getAssuranceById(Math.toIntExact(request.getAssuranceId()));
-        Adherant adherant = adherantRepo.findById(Math.toIntExact(request.getAdherantId()))
-                .orElseThrow(() -> new RuntimeException("adhérant  introuvable"));
+
+        double plafond;
+
+        if (request.getBeneficaireId() != null) {
+            Beneficiaire beneficiaire = beneficiairRepository.findById(Math.toIntExact(request.getBeneficaireId()))
+                    .orElseThrow(() -> new RuntimeException("Bénéficiaire introuvable"));
+            plafond = beneficiaire.getPlafond();
+        } else {
+            Adherant adherant = adherantRepo.findById(Math.toIntExact(request.getAdherantId()))
+                    .orElseThrow(() -> new RuntimeException("Adhérant introuvable"));
+            plafond = adherant.getPlafond();
+        }
+
+        double potentielTotalOrdonnance = prixCotation * assurance.getPrix_cotation();
+        if (potentielTotalOrdonnance > plafond) {
+            throw new RuntimeException("Le plafond est insuffisant pour couvrir les frais.");
+        }
+
         double totalOrdonnance = 0;
         double montantTicketModerateur = 0;
         double montantRembourse = 0;
 
-        // Logique de calcul en fonction des actes sélectionnés
         if (request.getActes().contains("Consultation")) {
             if (request.getActes().contains("Soins Dentaire")) {
                 totalOrdonnance = prixCotation * assurance.getPrix_cotation();
@@ -737,7 +792,6 @@ public class PrestationServiceImplm implements PrestationService {
             }
         }
 
-        // Calcul par défaut
         if (totalOrdonnance == 0) {
             totalOrdonnance = prixCotation * assurance.getPrix_cotation();
         }
@@ -748,13 +802,17 @@ public class PrestationServiceImplm implements PrestationService {
             montantRembourse = totalOrdonnance - montantTicketModerateur;
         }
 
-        // Vérification des plafonds et des valeurs négatives ou nulles
-        if (totalOrdonnance > adherant.getPlafond()) {
-            totalOrdonnance = adherant.getPlafond();
+        if (totalOrdonnance < 0 || montantTicketModerateur < 0 || montantRembourse < 0) {
+            throw new RuntimeException("Les valeurs calculées ne peuvent pas être négatives.");
         }
+
+        if (totalOrdonnance > plafond) {
+            throw new RuntimeException("Le plafond est insuffisant pour couvrir les frais.");
+        }
+
+        totalOrdonnance = Math.max(0, totalOrdonnance);
         montantTicketModerateur = Math.max(0, montantTicketModerateur);
         montantRembourse = Math.max(0, montantRembourse);
-        totalOrdonnance = Math.max(0, totalOrdonnance);
 
         response.setTotalOrdonnance(totalOrdonnance);
         response.setMontantTicketModerateur(montantTicketModerateur);
@@ -762,6 +820,7 @@ public class PrestationServiceImplm implements PrestationService {
 
         return response;
     }
+
 
     private Assurance getAssuranceById(int assuranceId) {
          return  assuranceRepository.findByIddd(assuranceId);
@@ -771,7 +830,7 @@ public class PrestationServiceImplm implements PrestationService {
     public PrestationWithBeneficiaireDTO getPrestationsWithActesAndBenefById(int id) {
         Prestation prestation = prestationRepository.findWithIdAndArchive(id);
         if (prestation == null) {
-            return null; // Ou une gestion d'erreur appropriée si la prestation n'est pas trouvée
+            return null;
         }
 
         PrestationWithBeneficiaireDTO dto = new PrestationWithBeneficiaireDTO();
@@ -790,7 +849,6 @@ public class PrestationServiceImplm implements PrestationService {
         dto.setAdherant(prestation.getAdherant());
         dto.setUser(prestation.getUser());
 
-        // Si beneficiaireId est non null, rechercher le beneficiaire associé
         if (prestation.getBeneficiaireId() != null) {
             Beneficiaire beneficiaire = beneficiairRepository.findById(Integer.parseInt(prestation.getBeneficiaireId())).orElse(null);
             dto.setBeneficiaire(beneficiaire);
@@ -914,7 +972,7 @@ public class PrestationServiceImplm implements PrestationService {
 
     private String genererRefOrdinaire() {
         int compteur =  incrementCounterForAdherentOrdinaire();
-        return "2024presO" +   "(" + compteur + ")";
+        return String.format("2024presO%06d", compteur);
     }
 
     private String genererRefOrdinaireDentiste() {

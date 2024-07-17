@@ -33,7 +33,7 @@ public class Rapport_C_V_OpticienDTO {
         this.ref = rapport.getRef();
         this.refNumber = rapport.getRefNumber();
         this.observation = rapport.getObservation();
-        this.prestation = rapport.getPrestation(); // Set prestationId
+        this.prestation = rapport.getPrestation();
         this.sphereD = rapport.getSphereD();
         this.axeD = rapport.getAxeD();
         this.acuiteD = rapport.getAcuiteD();

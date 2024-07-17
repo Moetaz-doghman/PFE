@@ -44,6 +44,9 @@ public class Mapper {
         ReclamationDTO dto = new ReclamationDTO();
         dto.setId(reclamation.getId());
         dto.setTitre(reclamation.getTitre());
+        dto.setType(reclamation.getType());
+        dto.setConvention(reclamation.getConvention());
+        dto.setQualifications(reclamation.getQualifications());
         dto.setDescription(reclamation.getDescription());
         dto.setDateCreation(reclamation.getDateCreation());
         dto.setStatut(reclamation.getStatut());

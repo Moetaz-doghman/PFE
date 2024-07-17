@@ -1,9 +1,11 @@
 package com.example.projectPfe.Services;
 
+import com.example.projectPfe.Exceptions.UserNotFoundException;
 import com.example.projectPfe.Services.Interface.AdherantService;
 import com.example.projectPfe.models.Adherant;
 import com.example.projectPfe.models.Assurance;
 import com.example.projectPfe.models.Beneficiaire;
+import com.example.projectPfe.models.Utilisateur;
 import com.example.projectPfe.repository.AdherantRepository;
 import com.example.projectPfe.repository.AssuranceRepository;
 import com.example.projectPfe.repository.BeneficiairRepository;
@@ -23,7 +25,39 @@ public class AdherantServiceImp implements AdherantService {
 
     private  final AssuranceRepository assuranceRepository;
 
+    private static final int START_MATRICULE = 100000;
 
+    public String generateNextMatricule() {
+        Integer maxMatricule = adherantRepository.findMaxMatricule();
+        if (maxMatricule == null) {
+            return String.format("%06d", START_MATRICULE);
+        }
+        return String.format("%06d", maxMatricule + 1);
+    }
+
+    @Override
+    public Adherant ajouterAdherant(Adherant adherant, int assuranceId) {
+
+        if (adherantRepository.existsByMatricule(adherant.getMatricule())) {
+            throw new RuntimeException("Une adhérent avec la même matricule existe déjà");
+        }
+
+        if (adherantRepository.existsByCin(adherant.getCin())) {
+            throw new RuntimeException("Une adhérent avec le même CIN existe déjà");
+        }
+
+        if (adherant.getMatricule() == null || adherant.getMatricule().isEmpty()) {
+            adherant.setMatricule(generateNextMatricule());
+        }
+
+        Assurance assurance = assuranceRepository.findById(assuranceId)
+                .orElseThrow(() -> new RuntimeException("Assurance introuvable"));
+
+        adherant.setAssurance(assurance);
+        adherant.setActive(true);
+
+        return adherantRepository.save(adherant);
+    }
     @Override
     public Adherant findAdherantByAssuranceNomAndMatricule(String assuranceNom, String matricule) {
 
@@ -36,22 +70,7 @@ public class AdherantServiceImp implements AdherantService {
         return assuranceRepository.findAllAssuranceNames();
     }
 
-    @Override
-    public Adherant ajouterAdherant(Adherant adherant, int assurance) {
 
-        if (adherantRepository.existsByMatricule(adherant.getMatricule())) {
-            throw new RuntimeException("Une adhérent avec la même matricule existe déjà");
-        }
-
-        if (adherantRepository.existsByCin(adherant.getCin())) {
-            throw new RuntimeException("Une adhérent avec le même CIN existe déjà");
-        }
-
-        Assurance assur = assuranceRepository.findById(assurance)
-                .orElseThrow(() -> new RuntimeException("assurance introuvable"));
-        adherant.setAssurance(assur);
-        return adherantRepository.save(adherant);
-    }
 
     @Override
     public Optional<Adherant> getAdherantById(int id) {
@@ -76,26 +95,42 @@ public class AdherantServiceImp implements AdherantService {
     }
 
     @Override
+    public Adherant desactiverAdherant(int adherantId) {
+        Adherant adherant = adherantRepository.findById(adherantId)
+                .orElseThrow(() -> new UserNotFoundException("adherent non trouvé avec l'ID : " + adherantId));
+
+        adherant.desactiverAdherant();
+
+        return adherantRepository.save(adherant);
+    }
+
+    @Override
+    public Adherant activerAdherant(int adherantId) {
+        Adherant adherant = adherantRepository.findById(adherantId)
+                .orElseThrow(() -> new UserNotFoundException("adherant non trouvé avec l'ID : " + adherantId));
+
+        adherant.activerAdherant();
+
+        return adherantRepository.save(adherant);
+    }
+
+    @Override
     public Adherant modifierAdherent(int id, Adherant nouvelAdherent, int idAssurance) {
         Optional<Adherant> adherantOptional = adherantRepository.findById(id);
         if (adherantOptional.isPresent()) {
             Adherant adherant = adherantOptional.get();
 
-            // Vérification si le nouveau matricule existe déjà pour un autre adhérent
             if (!adherant.getMatricule().equals(nouvelAdherent.getMatricule()) && adherantRepository.existsByMatricule(nouvelAdherent.getMatricule())) {
                 throw new RuntimeException("Un adhérent avec le même matricule existe déjà");
             }
 
-            // Vérification si le nouveau CIN existe déjà pour un autre adhérent
             if (!adherant.getCin().equals(nouvelAdherent.getCin()) && adherantRepository.existsByCin(nouvelAdherent.getCin())) {
                 throw new RuntimeException("Un adhérent avec le même CIN existe déjà");
             }
 
-            // Récupération de l'assurance
             Assurance assurance = assuranceRepository.findById(idAssurance)
                     .orElseThrow(() -> new RuntimeException("Assurance introuvable"));
 
-            // Mise à jour des informations de l'adhérent
             adherant.setNom(nouvelAdherent.getNom());
             adherant.setPrenom(nouvelAdherent.getPrenom());
             adherant.setMatricule(nouvelAdherent.getMatricule());

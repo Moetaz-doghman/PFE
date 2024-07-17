@@ -40,6 +40,13 @@ public class ReclamationController {
         return new ResponseEntity<>(reclamationsDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Reclamation>> getAllReclamationss() {
+        List<Reclamation> reclamationsDTO = reclamationService.getAllReclamations();
+        return new ResponseEntity<>(reclamationsDTO, HttpStatus.OK);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Reclamation> getReclamationById(@PathVariable int id) {
         Optional<Reclamation> reclamation = reclamationService.getReclamationById(id);

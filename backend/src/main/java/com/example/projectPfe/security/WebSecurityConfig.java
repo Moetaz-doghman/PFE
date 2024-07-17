@@ -103,7 +103,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(" /api/actes/**").permitAll()
                                 .requestMatchers(" /api/reclamation/**").permitAll()
 
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
 
         http.authenticationProvider(authenticationProvider());

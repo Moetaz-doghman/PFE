@@ -30,7 +30,6 @@ public class ForgotPasswordController {
     private final PasswordEncoder passwordEncoder;
 
 
-    //private fianl PasswordE
 
     private final ForgotPasswordRepostitory forgotPasswordRepostitory ;
 
@@ -75,14 +74,14 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/send-html-email/{email}")
-    public void sendHtmlEmail(@PathVariable String email) {
+    public ResponseEntity<String> sendHtmlEmail(@PathVariable String email) {
         Context context = new Context();
+
         Utilisateur user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Veuillez fournir un e-mail valide "));
+                .orElseThrow(() -> new UsernameNotFoundException("Please provide a valid email "));
 
         int otp= otpGeneratior();
 
-        // Ajoutez la date actuelle au contexte
         Date currentDate = new Date();
         context.setVariable("currentDate", currentDate);
 
@@ -98,11 +97,16 @@ public class ForgotPasswordController {
                 .user(user)
                 .build();
 
-        context.setVariable("name", user.getNom()); // Passer le nom de l'utilisateur au template
-        context.setVariable("otp", otp); // Passer l'OTP au template
+        context.setVariable("name", user.getNom());
+        context.setVariable("otp", otp);
 
         emailService.sendEmailWithHtmlTemplate(mailBody, "email-template", context);
+        forgotPasswordRepostitory.save(fp);
+
+        return ResponseEntity.ok("");
+
     }
+
 
     private Integer otpGeneratior(){
         Random random = new Random( );
@@ -147,10 +151,8 @@ public class ForgotPasswordController {
         }
 
         String encryptedPassword = passwordEncoder.encode(changePassword.password());
-        //String encodedPassword = passwordEncoder.encode(changePassword.password());
         userRepository.updatePassword(email, encryptedPassword);
         forgotPasswordRepostitory.deleteById(fp.getFpid());
-
 
         return ResponseEntity.ok("");
 

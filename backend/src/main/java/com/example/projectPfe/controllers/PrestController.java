@@ -1,5 +1,6 @@
 package com.example.projectPfe.controllers;
 
+import com.example.projectPfe.Exceptions.ErrorResponse;
 import com.example.projectPfe.Services.PrestationServiceImplm;
 import com.example.projectPfe.dto.CalculationRequest;
 import com.example.projectPfe.dto.CalculationResponse;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,12 +46,12 @@ public class PrestController {
     public ResponseEntity<String> ajouterPrestationContreVisite(
             @RequestParam int idPrestationOrdinaire,
             @RequestParam int adherantId,
-            @PathVariable int userId,
+                @PathVariable int userId,
             @RequestParam Efavore favore
     ) {
         try {
             Prestation prestation = prestationServices.ajouterPrestationContreVisite(idPrestationOrdinaire, adherantId, userId, favore);
-            return new ResponseEntity<>("ggg",  HttpStatus.CREATED);
+            return new ResponseEntity<>("",  HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("" + e.getMessage() ,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -191,27 +194,19 @@ public class PrestController {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date dateCreationParsed = dateFormat.parse(dateCreation);
 
-            // Convertir l'ensemble d'objets Eacte en une liste de noms d'actes dentaires
             List<String> actesDentairesList = actesDentaires.stream()
                     .map(Eacte::name) // Supposons que le nom de l'acte soit accessible via la méthode name()
                     .collect(Collectors.toList());
 
-            // Convertir la liste de noms d'actes dentaires en une seule chaîne séparée par des virgules
                 String actesDentairesStr = String.join(",", actesDentairesList);
 
-            // Diviser la chaîne en une liste de chaînes en utilisant la virgule comme séparateur
             List<String> actesDentairesListSplitted = Arrays.asList(actesDentairesStr.split(","));
 
-            // Convertir la liste de noms d'actes dentaires en un ensemble d'objets Eacte
             Set<Eacte> actesDentairesSet = actesDentairesListSplitted.stream()
                     .map(Eacte::valueOf) // Supposons que vous ayez une méthode valueOf() dans la classe Eacte pour convertir une chaîne en Eacte
                     .collect(Collectors.toSet());
 
 
-
-
-
-            // Appeler la méthode correspondante dans le service
             prestationServices.ajouterPrestationPourDentiste(
                     adherantId,
                     montantTotal,
@@ -224,10 +219,8 @@ public class PrestController {
                     totalCotation
             );
 
-            // Retourner une réponse de succès
             return new ResponseEntity<>("", HttpStatus.CREATED);
         } catch (Exception e) {
-            // En cas d'erreur, retourner une réponse avec le message d'erreur
             return new ResponseEntity<>("" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -287,6 +280,11 @@ public class PrestController {
     @GetMapping("/withActesAndBenef")
     public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenef() {
         return prestationServices.getPrestationsWithActesAndBenef();
+    }
+
+    @GetMapping("/withActesAndBenefAndTypeContreVisite")
+    public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenefAndTypeContreVisite() {
+        return prestationServices.getPrestationsWithActesAndBenefAndTypeContreVisite();
     }
 
     @GetMapping("/withActesAndBenef/{id}")
@@ -391,12 +389,21 @@ public class PrestController {
     }
 
     @PostMapping("/calculate")
-    public ResponseEntity<CalculationResponse> calculate(@RequestBody CalculationRequest request) {
-        CalculationResponse response = prestationServices.calculate(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> calculate(@RequestBody CalculationRequest request) {
+        try {
+            CalculationResponse response = prestationServices.calculate(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            // Log the exception for debugging
+            Logger.getLogger(PrestController.class.getName()).log(Level.SEVERE, null, e);
+            // Return a more descriptive error response to the client
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
 
-  
+
+
 
 }

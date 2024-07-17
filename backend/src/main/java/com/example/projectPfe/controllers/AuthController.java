@@ -44,15 +44,22 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser( @RequestBody LoginRequest loginRequest) {
-
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        if (!userDetails.isActive()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("NotActive"));
+
+        }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
@@ -69,6 +76,12 @@ public class AuthController {
                 userDetails.getIdentiteBancaire(),
                 userDetails.isActive(),
                 roles));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(new MessageResponse("Successfully logged out!"));
     }
 
     @PostMapping("/signup")
@@ -103,7 +116,6 @@ public class AuthController {
 
         } else {
             strRoles.forEach(role -> {
-
 
                 switch (role) {
 
@@ -147,5 +159,6 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
 
 }

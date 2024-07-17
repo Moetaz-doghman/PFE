@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contre-visite requise</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .header { background-color: #78ab46; color: #fff; padding: 40px 0; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { padding: 40px 30px; }
+        .footer { background-color: #777; color: #fff; padding: 30px; border-radius: 0 0 10px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .footer img { height: auto; width: auto; max-width: 100px; max-height: 100px; margin-right: 230px; }
+        .footer p { margin: 0; margin-top: 40px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Contre visite requise</h1>
+    </div>
+    <div class="content">
+        <p>Cher professionnel de santé,</p>
+        <p>Vous avez une nouvelle contre-visite.</p>
+        <p th:if="${adherantNom} != null">Informations de l'adhérant :</p>
+        <ul th:if="${adherantNom} != null">
+            <li>Nom: <span th:text="${adherantNom}"></span></li>
+            <li>Prénom: <span th:text="${adherantPrenom}"></span></li>
+            <li>Date de naissance: <span th:text="${adherantDateNais}"></span></li>
+        </ul>
+        <p th:if="${beneficiaireNom} != null">Informations du bénéficiaire :</p>
+        <ul th:if="${beneficiaireNom} != null">
+            <li>Nom: <span th:text="${beneficiaireNom}"></span></li>
+            <li>Prénom: <span th:text="${beneficiairePrenom}"></span></li>
+            <li>Sexe: <span th:text="${beneficiaireSexe}"></span></li>
+            <li>Date de naissance: <span th:text="${beneficiaireDateNais}"></span></li>
+            <li>Qualité: <span th:text="${beneficiaireQualite}"></span></li>
+        </ul>
+        <p>Cordialement,</p>
+        <p>Équipe de I_way</p>
+    </div>
+    <div class="footer">
+        <img src="https://drive.google.com/uc?export=view&id=1jSgznco6OKkArzB2diBTR6E7srO9m4lm" alt="Logo"/>
+        <p>Date d'aujourd'hui : <span th:text="${#dates.format(currentDate, 'dd-MM-yyyy')}"></span></p>
+    </div>
+</div>
+</body>
+</html>

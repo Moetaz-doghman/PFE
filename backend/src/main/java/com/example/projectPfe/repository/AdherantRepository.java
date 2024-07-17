@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdherantRepository extends JpaRepository<Adherant,Integer> {
 
+    @Query("SELECT a FROM Adherant a WHERE a.assurance.nom = :assuranceNom AND a.matricule = :matricule AND a.active = true")
     Adherant findByAssuranceNomAndMatricule(String assuranceNom, String matricule);
 
 
@@ -21,4 +22,6 @@ public interface AdherantRepository extends JpaRepository<Adherant,Integer> {
     Adherant findByPrestationId(int prestationId);
 
 
+    @Query("SELECT MAX(CAST(a.matricule AS int)) FROM Adherant a")
+    Integer findMaxMatricule();
 }

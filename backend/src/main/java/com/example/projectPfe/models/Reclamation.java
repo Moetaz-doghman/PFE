@@ -23,8 +23,13 @@ public class Reclamation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "Le titre est obligatoire")
     private String titre;
+
+    private String type ;
+
+    private String convention ;
+
+    private String qualifications;
 
     @NotBlank(message = "La description est obligatoire")
     private String description;

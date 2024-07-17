@@ -3,6 +3,8 @@ package com.example.projectPfe.Services;
 import com.example.projectPfe.Exceptions.EmailAlreadyExistsException;
 import com.example.projectPfe.Exceptions.UserNotFoundException;
 import com.example.projectPfe.Services.Interface.UserService;
+import com.example.projectPfe.dto.MailBody;
+import com.example.projectPfe.models.ChangePasswordRequest;
 import com.example.projectPfe.models.ERole;
 import com.example.projectPfe.models.Role;
 import com.example.projectPfe.models.Utilisateur;
@@ -14,7 +16,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +31,9 @@ public class UserServiceImp implements UserService {
     private final JavaMailSender emailSender;
     private final PasswordEncoder passwordEncoder;
 
+    private final EmailService emailService ;
+
+
     @Override
     public Utilisateur ajouterCompte(Utilisateur user , ERole roleName) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -35,10 +42,29 @@ public class UserServiceImp implements UserService {
 
         Role role = roleRepository.findByName(ERole.valueOf(String.valueOf(roleName)))
                 .orElseThrow(() -> new UserNotFoundException("Le rôle spécifié n'existe pas."));
+
+        Context context = new Context();
+
         user.getRoles().add(role);
         user.activerCompte();
         Utilisateur savedUser = userRepository.save(user);
-        sendAccountDetailsEmail(savedUser.getEmail(), savedUser.getPassword());
+      //  sendAccountDetailsEmail(savedUser.getEmail(), savedUser.getPassword());
+
+        // Ajoutez la date actuelle au contexte
+        Date currentDate = new Date();
+        context.setVariable("currentDate", currentDate);
+
+        MailBody mailBody = MailBody.builder()
+                .to(savedUser.getEmail())
+                .subject("Détails de votre compte " )
+                .build();
+
+        context.setVariable("name", savedUser.getNom());
+        context.setVariable("email" , savedUser.getEmail());
+        context.setVariable("mdp" , savedUser.getPassword());
+
+        emailService.sendEmailWithHtmlTemplate(mailBody, "template", context);
+
 
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
@@ -76,6 +102,31 @@ public class UserServiceImp implements UserService {
                     .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
             user.setPassword(newPassword);
             userRepository.save(user);
+
+    }
+
+    @Override
+    public boolean changePassword(int userId, ChangePasswordRequest request) {
+        Utilisateur user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("New password and confirm password do not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return true;
+
+
+
+
 
     }
 

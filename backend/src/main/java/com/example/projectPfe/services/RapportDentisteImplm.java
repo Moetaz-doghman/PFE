@@ -27,7 +27,7 @@ public class RapportDentisteImplm  {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    public List<Rapport_C_V_Dentaire> addRapportDentaire(List<RapportDentaireDTO> dtos) {
+    public List<String> addRapportDentaire(List<RapportDentaireDTO> dtos) {
         Integer maxReference = rapportCVDentaireRepository.getMaxReference();
         int nouvelleReference = (maxReference != null) ? maxReference + 1 : 1;
         String ref = genererRef(nouvelleReference);
@@ -38,7 +38,6 @@ public class RapportDentisteImplm  {
                     .orElseThrow(() -> new RuntimeException("Prestation not found"));
             Utilisateur utilisateur = utilisateurRepository.findById(dto.getUserId())
                     .orElseThrow(() -> new RuntimeException("Utilisateur not found"));
-
 
             Rapport_C_V_Dentaire rapport = Rapport_C_V_Dentaire.builder()
                     .ref(ref)
@@ -58,7 +57,8 @@ public class RapportDentisteImplm  {
 
             prestation.setRapportcontreVisite(true);
             prestationRepository.save(prestation);
-            return rapportCVDentaireRepository.save(rapport);
+            Rapport_C_V_Dentaire savedRapport = rapportCVDentaireRepository.save(rapport);
+            return savedRapport.getRef();
         }).collect(Collectors.toList());
     }
 
@@ -71,8 +71,8 @@ public class RapportDentisteImplm  {
         return rapportCVDentaireRepository.findRapportsWithContreVisiteAndSameRef();
     }
 
-    public List<CombinedRapportDTO> getCombinedRapports() {
-        List<Rapport_C_V> rapports = rapportCV_repo.findByPrestationRapportcontreVisiteTrue();
+    public List<CombinedRapportDTO> getCombinedRapports(Long userId) {
+        List<Rapport_C_V_Dentaire> rapports = rapportCVDentaireRepository.findDentaireByPrestationRapportcontreVisiteTrueAndUserId(userId);
         Map<String, CombinedRapportDTO> combinedMap = new HashMap<>();
 
         for (Rapport_C_V rapport : rapports) {
@@ -100,7 +100,6 @@ public class RapportDentisteImplm  {
                 utilisateurDTO.setPrenom(dentaire.getUtilisateur().getPrenom());
                 utilisateurDTO.setMatricule(dentaire.getUtilisateur().getMatricule());
 
-                // Ajoutez d'autres champs nécessaires de l'entité Utilisateur
 
                 dentaireDetail.setUtilisateur(utilisateurDTO);
                 detail = dentaireDetail;

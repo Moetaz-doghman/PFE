@@ -52,6 +52,12 @@ public interface PrestationRepository extends JpaRepository<Prestation,Integer> 
     @Query("SELECT DISTINCT p FROM Prestation p LEFT JOIN FETCH p.actes where p.archive = false ")
     List<Prestation> findAllWithActes();
 
+    @Query("SELECT DISTINCT p FROM Prestation p LEFT JOIN FETCH p.actes where p.archive = false and p.type = 'Ordinaire' ")
+    List<Prestation> findAllWithActesAndTypeOrdinare();
+
+    @Query("SELECT DISTINCT p FROM Prestation p LEFT JOIN FETCH p.actes where p.archive = false and p.type = 'Contre_visite' ")
+    List<Prestation> findAllWithActesAndTypeContreVisite();
+
     @Query("SELECT DISTINCT p FROM Prestation p LEFT JOIN FETCH p.actes WHERE p.user.id = :userId AND p.type = 'Contre_visite' AND p.archive = false AND p.rapportcontreVisite = false ")
     List<Prestation> findAllWithActesAndContreVisite(@Param("userId") int userId);
 

@@ -46,7 +46,6 @@
             max-width: 100px;
             max-height: 100px;
             margin-right: 230px;
-
         }
         .footer p {
             margin: 0;
@@ -61,12 +60,14 @@
     </div>
     <div class="content">
         <p>Bonjour <span th:text="${name}"></span>,</p>
-        <p>Code OTP pour la demande de réinitialisation de mot de passe : <span th:text="${otp}"></span></p>
+        <p>Votre compte a été créé avec succès.</p>
+        <p>Email:  <span th:text="${email}"></span ></p>
+        <p>Mot de passe:  <span th:text="${mdp}"></span> </p>
         <p>Au revoir,</p>
     </div>
     <div class="footer">
         <img src="https://drive.google.com/uc?export=view&id=1jSgznco6OKkArzB2diBTR6E7srO9m4lm" alt="Logo"/>
-        <p>Date d'aujourd'hui : <span th:text="${#dates.format(currentDate, 'dd-MM-yyyy')}"></span></p>
+        <p>Date d'aujourd'hui : 11-06-2024</p> <!-- Remplacez cette date par la date actuelle -->
     </div>
 </div>
 </body>

@@ -1,5 +1,6 @@
 package com.example.projectPfe.Services.Interface;
 
+import com.example.projectPfe.models.ChangePasswordRequest;
 import com.example.projectPfe.models.ERole;
 import com.example.projectPfe.models.Utilisateur;
 
@@ -24,6 +25,7 @@ public interface UserService {
     Utilisateur modifierUtilisateur(int id, Utilisateur user);
      void changePassword(int userId, String newPassword);
 
+    public boolean changePassword(int userId, ChangePasswordRequest request);
 
 
 }

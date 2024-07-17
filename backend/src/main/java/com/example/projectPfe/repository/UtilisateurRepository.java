@@ -12,7 +12,7 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
 
     Boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM Utilisateur u JOIN u.roles r WHERE r.name <> 'ROLE_ADMIN '")
+    @Query("SELECT u FROM Utilisateur u JOIN u.roles r WHERE  NOT  r.name ='ROLE_ADMIN' ")
     List<Utilisateur> findAllExceptAdmins();
 
 }

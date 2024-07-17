@@ -14,6 +14,8 @@ public interface ReclamationService {
     Reclamation ajouterReclamation(Reclamation reclamation, int userId);
     List<ReclamationDTO> getAllReclamation();
 
+    List<Reclamation> getAllReclamations();
+
     Optional<Reclamation> getReclamationById(int id);
     List<Reclamation> getReclamationsByUserId(int utilisateurId);
 

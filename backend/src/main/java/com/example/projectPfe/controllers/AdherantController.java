@@ -3,6 +3,7 @@ package com.example.projectPfe.controllers;
 import com.example.projectPfe.Services.Interface.AdherantService;
 import com.example.projectPfe.models.Adherant;
 import com.example.projectPfe.models.Beneficiaire;
+import com.example.projectPfe.models.Utilisateur;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +87,17 @@ public class AdherantController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/disable/{adherantId}")
+    public ResponseEntity<String> desactiverCompte(@PathVariable int adherantId) {
+        Adherant adherant = adherantService.desactiverAdherant(adherantId);
+        return ResponseEntity.status(HttpStatus.OK).body("Adherant désactivé avec succès");
+    }
 
+    @PutMapping("/able/{adherantId}")
+    public ResponseEntity<String> activerCompte(@PathVariable int adherantId) {
+        Adherant adherant = adherantService.activerAdherant(adherantId);
+        return ResponseEntity.status(HttpStatus.OK).body("Adherant activé avec succès");
+    }
 
 
 }

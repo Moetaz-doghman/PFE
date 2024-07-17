@@ -51,6 +51,8 @@ public interface PrestationService {
 
     public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenef() ;
 
+    public List<PrestationWithBeneficiaireDTO> getPrestationsWithActesAndBenefAndTypeContreVisite() ;
+
     public PrestationWithBeneficiaireDTO getPrestationsWithActesAndBenefById(int id) ;
 
     public void deletePrestation(int id,float montantTotale) ;

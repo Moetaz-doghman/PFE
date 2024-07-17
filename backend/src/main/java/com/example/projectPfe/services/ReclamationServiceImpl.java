@@ -44,6 +44,11 @@ public class ReclamationServiceImpl implements ReclamationService {
     }
 
     @Override
+    public List<Reclamation> getAllReclamations() {
+        return  reclamationRepository.findAll();
+    }
+
+    @Override
     public Optional<Reclamation> getReclamationById(int id) {
         return reclamationRepository.findById(id);
     }

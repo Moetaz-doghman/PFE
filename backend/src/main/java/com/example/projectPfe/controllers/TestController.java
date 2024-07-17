@@ -23,7 +23,7 @@ public class TestController {
     }
 
     @GetMapping("/opt")
-    @PreAuthorize("hasRole('ROLE_DENTIST') or hasRole('ROLE_OPTICIEN')")
+    @PreAuthorize("hasRole('ROLE_OPTICIEN')")
     public String moderatorAccess() {
         return "opticien Board";
     }

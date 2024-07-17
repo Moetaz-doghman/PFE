@@ -3,6 +3,7 @@ package com.example.projectPfe.controllers;
 
 import com.example.projectPfe.Services.Interface.UserService;
 import com.example.projectPfe.Services.UtilisateurService;
+import com.example.projectPfe.models.ChangePasswordRequest;
 import com.example.projectPfe.models.ERole;
 import com.example.projectPfe.models.Utilisateur;
 import com.example.projectPfe.repository.UserRepository;
@@ -79,7 +80,7 @@ public class UtilisateurController {
     @PutMapping("/able/{userId}")
     public ResponseEntity<String> activerCompte(@PathVariable int userId) {
         Utilisateur user = userService.activerCompte(userId);
-        return ResponseEntity.status(HttpStatus.OK).body("Compte utilisateur activé avec succès");
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
     @DeleteMapping("/{id}")
@@ -122,15 +123,11 @@ public class UtilisateurController {
         return utilisateurService.findByActive();
     }
 
-    @PutMapping("/change-password/{userId}")
-    public ResponseEntity<String> changePassword(@PathVariable int userId, @RequestParam String newPassword) {
-        try {
-            userService.changePassword(userId, newPassword);
-            return ResponseEntity.ok("Password changed successfully");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    @PostMapping("/{id}/change-password")
+    public  ResponseEntity<String> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(id, request);
+        return new ResponseEntity<>( HttpStatus.CREATED);    }
+
 
 
 

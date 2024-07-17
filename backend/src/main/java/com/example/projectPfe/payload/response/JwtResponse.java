@@ -61,35 +61,6 @@ public class JwtResponse {
         this.type = tokenType;
     }
 
-//    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getNom() {
-//        return nom;
-//    }
-//
-//    public void setNom(String username) {
-//        this.nom = username;
-//    }
-//
-//    public List<String> getRoles() {
-//        return roles;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
+
+
 }
