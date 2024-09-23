@@ -10,8 +10,15 @@ pipeline {
         stage('GIT') {
             steps {
                 echo "Getting Project from Git"
-                git branch: 'main',
-                    url: 'https://github.com/Moetaz-doghman/PFE.git'
+                git branch: 'main', url: 'https://github.com/Moetaz-doghman/PFE.git'
+            }
+        }
+
+        stage('Check Maven Version') {
+            steps {
+                dir('backend') {
+                    sh 'mvn -version' // Check if Maven is correctly installed
+                }
             }
         }
 
@@ -29,13 +36,13 @@ pipeline {
                 dir('backend') {
                     // Ensure Maven Wrapper is executable
                     sh 'chmod +x ./mvnw'
-
+                    
                     // Add extra logging for troubleshooting Maven Wrapper issues
                     sh 'ls -la .mvn/wrapper/' // Check the wrapper files
                     sh 'cat .mvn/wrapper/maven-wrapper.properties' // Display wrapper properties
 
-                    // Run Maven build with debugging
-                    sh './mvnw clean install -X' // Use -X for debug output
+                    // Run Maven build directly
+                    sh 'mvn clean install -X' // Call Maven directly instead of using the wrapper
                 }
             }
         }
