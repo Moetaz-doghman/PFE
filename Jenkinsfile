@@ -1,10 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = '/usr/lib/jvm/default-java' // Adjust the path to your Java installation
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
-    }
+
 
     stages {
         stage('GIT') {
