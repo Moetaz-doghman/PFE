@@ -10,7 +10,7 @@ pipeline {
             }
         }
 
-        stage("Build") {
+        stage("Builsssssd") {
             steps {
                 sh "chmod +x ./mvnw"
                 sh "mvn clean package -X"
