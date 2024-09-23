@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        JAVA_HOME = '/usr/lib/jvm/default-java' // Ajustez ce chemin selon votre installation
+        JAVA_HOME = '/usr/lib/jvm/default-java' // Adjust the path to your Java installation
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
-        stage ('GIT') {
+        stage('GIT') {
             steps {
                 echo "Getting Project from Git"
                 git branch: 'main',
@@ -18,20 +18,33 @@ pipeline {
         stage('Debug') {
             steps {
                 dir('backend') {
-                    sh 'pwd' // Affiche le répertoire actuel
-                    sh 'ls -la' // Liste les fichiers pour s'assurer que tu es dans le bon dossier
+                    sh 'pwd' // Show current directory
+                    sh 'ls -la' // List files to confirm you're in the correct directory
                 }
             }
         }
 
         stage('Backend Build') {
             steps {
-                dir('backend') { // Change to the backend directory
-                    sh 'chmod +x ./mvnw' // Adjust this command to the backend directory
-                    sh './mvnw clean install'
+                dir('backend') {
+                    // Ensure Maven Wrapper is executable
+                    sh 'chmod +x ./mvnw'
+
+                    // Add extra logging for troubleshooting Maven Wrapper issues
+                    sh 'ls -la .mvn/wrapper/' // Check the wrapper files
+                    sh 'cat .mvn/wrapper/maven-wrapper.properties' // Display wrapper properties
+
+                    // Run Maven build with debugging
+                    sh './mvnw clean install -X' // Use -X for debug output
                 }
             }
         }
+    }
 
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs() // Clean up the workspace after the job completes
+        }
     }
 }
