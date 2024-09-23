@@ -15,13 +15,25 @@ pipeline {
             }
         }
 
-
-        stage("Build") {
+        stage('Debug') {
             steps {
-                sh "chmod +x ./backend/mvnw"
-                sh "mvn clean package -X"
-                sh "mvn --version"
+                dir('backend') {
+                    sh 'pwd' // Affiche le répertoire actuel
+                    sh 'ls -la' // Liste les fichiers pour s'assurer que tu es dans le bon dossier
+                }
             }
         }
+
+        stage('Backend Build') {
+            steps {
+                dir('backend') {
+                    sh "chmod +x ./mvnw"
+                    sh "mvn clean package -X"
+                    sh "mvn --version"
+            
+                }
+            }
+        }
+
     }
 }
