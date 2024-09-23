@@ -24,15 +24,9 @@ pipeline {
             }
         }
 
-        stage('Backend Build') {
-            steps {
-                dir('backend') {
-                    sh "chmod +x ./mvnw"
-                    sh "mvn clean package -X"
-                    sh "mvn --version"
-            
-                }
-            }
+        dir('backend') { // Change to the backend directory
+                    sh 'chmod +x ./mvnw' // Adjust this command to the backend directory
+                    sh './mvnw clean install'
         }
 
     }
