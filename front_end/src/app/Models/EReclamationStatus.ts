@@ -1,5 +1,0 @@
-export enum EReclamationStatus{
-    EN_COURS_DE_TRAITEMENT = 'EN_COURS_DE_TRAITEMENT',
-    EN_ATTENTE = 'EN_ATTENTE',
-    REGLEE = 'REGLEE'
-}
