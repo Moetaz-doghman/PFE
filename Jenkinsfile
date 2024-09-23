@@ -17,11 +17,9 @@ pipeline {
 
         stage("Build") {
             steps {
-                dir('backend') {
-                    sh "chmod +x ./mvnw"
-                    sh "./mvnw clean package -X"
-                    sh "./mvnw --version"
-                }
+                    sh "chmod +x ./backend/mvnw"
+                    sh "./backend/mvnw clean package -X"
+                    sh "./backend/mvnw --version"
             }
         }
     }
