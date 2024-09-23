@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    tools {
+        maven 'M2_HOME'
+        jdk 'JAVA_HOME'
+    }
+
 
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
@@ -42,10 +47,12 @@ pipeline {
                     sh 'cat .mvn/wrapper/maven-wrapper.properties' // Display wrapper properties
 
                     // Run Maven build directly
-                    sh 'mvn clean install -X' // Call Maven directly instead of using the wrapper
+                    sh "mvn --version"
+                    sh "mvn clean package -DskipTests"                    
                 }
             }
         }
+
     }
 
     post {
