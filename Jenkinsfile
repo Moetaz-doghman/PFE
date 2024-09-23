@@ -15,11 +15,12 @@ pipeline {
             }
         }
 
+
         stage("Build") {
             steps {
-                    sh "chmod +x ./backend/mvnw"
-                    sh "./backend/mvnw clean package -X"
-                    sh "./backend/mvnw --version"
+                sh "chmod +x ./backend/mvnw"
+                sh "mvn clean package -X"
+                sh "mvn --version"
             }
         }
     }
