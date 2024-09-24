@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'java-17-openjdk'  // Le nom que vous avez donné à l'installation du JDK dans Jenkins
+        jdk 'JAVA_HOME'  // Le nom que vous avez donné à l'installation du JDK dans Jenkins
     }
 
     stages {
@@ -11,6 +11,13 @@ pipeline {
                 echo "Getting Project from Git"
                 git branch: 'main', url: 'https://github.com/Moetaz-doghman/PFE.git'
             }
+        }
+
+        stage("Check JAVA_HOME") {
+        steps {
+            sh 'echo $JAVA_HOME'
+            sh 'java -version'
+        }
         }
 
         stage("Build") {
