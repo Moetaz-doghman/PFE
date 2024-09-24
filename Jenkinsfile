@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout Code from Git') {
             steps {
                 echo "Fetching Project from GitHub"
-                git branch: 'moetazDoghman', url: 'https://github.com/hend01/5twin5_groupe2_skistation.git'
+                git branch: 'moetazDoghman', url: 'https://github.com/Moetaz-doghman/PFE.git'
             }
         }
 
@@ -37,9 +37,11 @@ pipeline {
 
         stage('Build Backend Application') {
             steps {
+                dir('backend') {
                     echo "Building the backend application"
                     // Nettoyage et mise à jour des dépendances Maven
                     sh 'mvn clean package -U -X'
+                }
             }
         }
 
