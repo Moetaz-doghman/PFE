@@ -3,7 +3,9 @@ pipeline {
 
     tools {
         jdk 'JAVA_HOME'  // Le nom que vous avez donné à l'installation du JDK dans Jenkins
+        maven 'M2_HOME'
     }
+
 
     stages {
         stage ('GIT') {
