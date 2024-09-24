@@ -27,15 +27,13 @@ pipeline {
             }
         }
 
-        stage("Build") {
+
+        stage('Build Backend Application') {
             steps {
-                sh "chmod +x ./mvnw"
-                sh "mvn clean package -X"
-                sh "mvn --version"
-            }
+                    sh "chmod +x ./mvnw"
+                    sh "mvn clean package -X"
+                    sh "mvn --version"
+                }
         }
-
-
-        
     }
 }
