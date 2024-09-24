@@ -27,26 +27,23 @@ pipeline {
             }
         }
 
-        stage('List Files') {
+        stage('List files after checkout') {
             steps {
-                sh 'ls -al'
+                echo "Listing files in workspace"
+                sh 'ls -la'
             }
         }
 
         stage('Build Backend Application') {
             steps {
-                dir('/backend') {
+                dir('backend') {  // Assurez-vous que le chemin est correct
+                    echo "Building backend application"
+                    sh 'ls -la'  // Afficher les fichiers dans le répertoire backend pour déboguer
                     script {
-                        sh 'pwd'  // Vérifie le répertoire de travail actuel
-                        sh 'ls -al'  // Vérifie la présence du fichier pom.xml
                         sh "mvn clean package -DskipTests"
                     }
                 }
             }
         }
-
-
-        
     }
-
 }
