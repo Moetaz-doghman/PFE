@@ -34,13 +34,19 @@ pipeline {
             }
         }
 
+        stage('Clean Maven Repository') {
+            steps {
+                sh 'rm -rf ~/.m2/repository/org/springframework/boot/spring-boot-dependencies/3.2.3'
+            }
+        }
+
         stage('Build Backend Application') {
             steps {
                 dir('backend') {  // Assurez-vous que le chemin est correct
                     echo "Building backend application"
                     sh 'ls -la'  // Afficher les fichiers dans le répertoire backend pour déboguer
                     script {
-                        sh "mvn clean package -DskipTests"
+                        sh "mvn clean package -DskipTests -U"
                     }
                 }
             }
