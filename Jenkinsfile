@@ -35,7 +35,7 @@ pipeline {
 
         stage('Build Backend Application') {
             steps {
-                dir('backend') {
+                dir('/backend') {
                     script {
                         sh 'pwd'  // Vérifie le répertoire de travail actuel
                         sh 'ls -al'  // Vérifie la présence du fichier pom.xml
