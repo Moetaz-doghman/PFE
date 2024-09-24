@@ -5,7 +5,7 @@ pipeline {
         stage ('GIT') {
             steps {
                 echo "Getting Project from Git"
-                git branch: 'main', // Spécifiez la branche 'main' ici
+                git branch: 'main',
                     url: 'https://github.com/Moetaz-doghman/PFE.git'
             }
         }
@@ -13,9 +13,12 @@ pipeline {
         stage("Build") {
             steps {
                 dir('backend') {
-                    sh "chmod +x ./mvnw"
-                    sh "./mvnw clean package -X"
-                    sh "./mvnw --version"
+                    // Définir JAVA_HOME explicitement pour s'assurer que Maven l'utilise
+                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64", "PATH+JDK=$JAVA_HOME/bin"]) {
+                        sh "chmod +x ./mvnw"
+                        sh "./mvnw clean package -X"
+                        sh "./mvnw --version"
+                    }
                 }
             }
         }
