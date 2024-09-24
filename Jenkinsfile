@@ -29,10 +29,12 @@ pipeline {
 
         stage('Clean Corrupted POM') {
             steps {
+            dir('backend') {
+
                 echo 'Removing corrupted POM file'
                 // Suppression du fichier POM corrompu
                 sh 'rm -f ~/.m2/repository/org/springframework/boot/spring-boot-starter-parent/3.2.3/spring-boot-starter-parent-3.2.3.pom'
-            }
+            } }
         }
 
         stage('Build Backend Application') {
