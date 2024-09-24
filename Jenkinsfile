@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout Code from Git') {
             steps {
                 echo "Fetching Project from GitHub"
-                git branch: 'moetazDoghman', url: 'https://github.com/hend01/5twin5_groupe2_skistation.gità'
+                git branch: 'moetazDoghman', url: 'https://github.com/hend01/5twin5_groupe2_skistation.git'
             }
         }
 
