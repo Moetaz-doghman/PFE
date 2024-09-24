@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JAVA_HOME'  // Utilisez le nom de l'installation du JDK dans Jenkins
-        maven 'M2_HOME'  // Utilisez le nom de l'installation Maven dans Jenkins
+        jdk 'JAVA_HOME'  // Remplace par le nom correct de l'installation JDK
+        maven 'M2_HOME'  // Remplace par le nom correct de l'installation Maven
     }
 
     environment {
-        MAVEN_OPTS = '-Xms256m -Xmx512m'  // Ajustement des options mémoire si nécessaire
+        MAVEN_OPTS = '-Xms256m -Xmx512m'  // Ajuste les options mémoire si nécessaire
     }
 
     stages {
@@ -18,10 +18,10 @@ pipeline {
             }
         }
 
-        stage("Check JAVA and Maven Environment") {
+        stage('Check Environment') {
             steps {
                 echo "Checking JAVA_HOME and Maven version"
-                sh 'echo $JAVA_HOME'
+                sh 'echo JAVA_HOME=$JAVA_HOME'
                 sh 'java -version'
                 sh 'mvn --version'
             }
@@ -29,12 +29,11 @@ pipeline {
 
         stage('Clean Corrupted POM') {
             steps {
-            dir('backend') {
-
-                echo 'Removing corrupted POM file'
-                // Suppression du fichier POM corrompu
-                sh 'rm -f ~/.m2/repository/org/springframework/boot/spring-boot-starter-parent/3.2.3/spring-boot-starter-parent-3.2.3.pom'
-            } }
+                dir('backend') {
+                    echo 'Removing corrupted POM file'
+                    sh 'rm -f ~/.m2/repository/org/springframework/boot/spring-boot-starter-parent/3.2.3/spring-boot-starter-parent-3.2.3.pom'
+                }
+            }
         }
 
         stage('Build Backend Application') {
@@ -42,7 +41,16 @@ pipeline {
                 dir('backend') {
                     echo "Building the backend application"
                     // Nettoyage et mise à jour des dépendances Maven
-                    sh 'mvn clean package -U -X'
+                    sh 'mvn clean package -U'
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                dir('backend') {
+                    echo "Running Unit Tests"
+                    sh 'mvn test'
                 }
             }
         }
@@ -50,7 +58,6 @@ pipeline {
         stage('Post-Build Cleanup') {
             steps {
                 echo 'Cleaning up local Maven repository'
-                // Optionnel : suppression des dépendances locales ou autres nettoyages si nécessaire
                 sh 'rm -rf ~/.m2/repository/org/springframework/boot/spring-boot-dependencies/3.2.3'
             }
         }
@@ -62,9 +69,11 @@ pipeline {
         }
         failure {
             echo 'Build failed!'
+            // Collect Maven logs if the build fails
+            archiveArtifacts artifacts: '**/target/*.log', allowEmptyArchive: true
         }
         always {
-            // Optionnel : archivage des artefacts ou des journaux en cas de réussite ou d'échec
+            // Archivage des artefacts générés après le build
             archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
         }
     }
