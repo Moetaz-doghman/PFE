@@ -27,17 +27,24 @@ pipeline {
             }
         }
 
-    
+        stage('List Files') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
         stage('Build Backend Application') {
             steps {
                 dir('backend') {
                     script {
-                    sh "mvn --version"
-                    sh "mvn clean package -DskipTests"
-                }
+                        sh 'pwd'  // Vérifie le répertoire de travail actuel
+                        sh 'ls -al'  // Vérifie la présence du fichier pom.xml
+                        sh "mvn clean package -DskipTests"
+                    }
                 }
             }
         }
+
 
         
     }
