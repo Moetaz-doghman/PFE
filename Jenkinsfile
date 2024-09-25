@@ -27,20 +27,6 @@ pipeline {
             }
         }
 
-        stage('Delete Maven Repository') {
-            steps {
-                echo "Deleting Maven Repository"
-                sh 'rm -rf /var/lib/jenkins/.m2/repository'
-            }
-        }
-
-        stage('Debug') {
-            steps {
-                sh 'pwd' // Affiche le répertoire actuel
-                sh 'ls -la' // Liste les fichiers pour s'assurer que tu es dans le bon dossier
-            }
-        }
-
         stage('Build Backend Application') {
             steps {
                 sh "chmod +x ./mvnw"
