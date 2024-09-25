@@ -27,6 +27,13 @@ pipeline {
             }
         }
 
+        stage('Debug') {
+            steps {
+                    sh 'pwd' // Affiche le répertoire actuel
+                    sh 'ls -la' // Liste les fichiers pour s'assurer que tu es dans le bon dossier
+            }
+        }
+
 
         stage('Build Backend Application') {
             steps {
