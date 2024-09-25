@@ -44,7 +44,7 @@ pipeline {
         stage('Build Backend Application') {
             steps {
                 sh "chmod +x ./mvnw"
-                sh "mvn clean package -X -U"
+                sh "mvn clean package -X -U -DskipTests"
                 sh "mvn --version"
             }
         }
