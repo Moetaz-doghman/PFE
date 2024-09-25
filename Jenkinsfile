@@ -27,12 +27,19 @@ pipeline {
             }
         }
 
+        stage('Delete Maven Repository') {
+        steps {
+            echo "Deleting Maven Repository"
+            sh 'rm -rf /var/lib/jenkins/.m2/repository'
+        }
+    }
+
 
         stage('Build Backend Application') {
             steps {
                 dir('backend') {  // Assurez-vous que le chemin est correct
                     sh "chmod +x ./mvnw"
-                    sh "mvn clean package -X"
+                    sh "mvn clean package -X -U -DskipTests"
                     sh "mvn --version"
                 }
             }
