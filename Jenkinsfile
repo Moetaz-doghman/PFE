@@ -39,8 +39,10 @@ pipeline {
 
         stage('Run JUnit and Mockito Tests') {
             steps {
-                sh 'mvn test'
-            }
+                dir('backend') {  
+                    sh 'mvn test'
+                }
+            }            
         }
     }
 }
