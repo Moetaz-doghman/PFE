@@ -63,7 +63,7 @@ pipeline {
         stage('Start MySQL Database') {
             steps {
                 dir('backend') {
-                    sh 'docker-compose up -d db'  // Démarre uniquement la base de données
+                    sh 'docker-compose up -d mysql'  // Démarre uniquement la base de données
                 }
             }
         }
