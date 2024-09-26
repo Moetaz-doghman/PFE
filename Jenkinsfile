@@ -2,7 +2,7 @@ pipeline {
     environment { 
         registry = "moetaz457/pfe"
         registryCredential = 'Dockerhub' 
-        dockerImage = ''
+        dockerImage = '' 
         MAVEN_OPTS = '-Xms256m -Xmx512m'
     }
     agent any
@@ -20,22 +20,28 @@ pipeline {
             }
         }
 
-        stage("Check Environment") {
+        stage("Check JAVA and Maven Environment") {
             steps {
-                echo "Checking JAVA_HOME, Maven, Docker, and Docker Compose"
+                echo "Checking JAVA_HOME and Maven version"
                 sh 'echo $JAVA_HOME'
                 sh 'java -version'
                 sh 'mvn --version'
-                sh 'docker --version'
-                sh 'docker-compose --version'
             }
         }
 
         stage('Build Backend Application') {
             steps {
-                dir('backend') {  
+                dir('backend') {
                     sh "chmod +x ./mvnw"
                     sh "mvn clean package -X -U -DskipTests"
+                }
+            }
+        }
+
+        stage('List Files') {
+            steps {
+                dir('backend') {
+                    sh 'ls -la'  // Vérifie la présence de docker-compose.yml
                 }
             }
         }
@@ -60,10 +66,13 @@ pipeline {
             }
         }
 
-        stage('Start MySQL Database') {
+        stage('Deploy Application using Docker') {
             steps {
                 dir('backend') {
-                    sh 'docker-compose up -d mysql'  // Démarre uniquement la base de données
+                    sh '''
+                    docker-compose down
+                    docker-compose up -d
+                    '''
                 }
             }
         }
@@ -72,17 +81,6 @@ pipeline {
             steps {
                 dir('backend') {  
                     sh 'mvn test'
-                }
-            }
-        }
-
-        stage('Deploy Application using Docker') {
-            steps {
-                dir('backend') {
-                    sh '''
-                    docker-compose down || true
-                    docker-compose up -d
-                    '''
                 }
             }
         }
