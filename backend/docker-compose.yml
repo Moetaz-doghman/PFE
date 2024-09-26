@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  app:
+    build: .
+    ports:
+      - "8034:8034"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/projetPfe2024?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projetPfe2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
