@@ -3,16 +3,14 @@ pipeline {
         registry = "moetaz457/pfe"
         registryCredential = 'Dockerhub' 
         dockerImage = '' 
+        MAVEN_OPTS = '-Xms256m -Xmx512m'
+
     }
     agent any
 
     tools {
         jdk 'JAVA_HOME'  // Nom de l'installation du JDK dans Jenkins
         maven 'M2_HOME'  // Nom de l'installation Maven dans Jenkins
-    }
-
-    environment {
-        MAVEN_OPTS = '-Xms256m -Xmx512m'
     }
 
     stages {
