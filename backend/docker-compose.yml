@@ -12,19 +12,20 @@ services:
       - mysql
 
   mysql:
-    image: mysql:8.0
+    container_name: mysql
+    image: mysql
+    cap_add:
+      - SYS_NICE
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD:  
-      MYSQL_DATABASE: projetPfe2024
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=projetPfe2024
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - mysql:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   mysql-data:
