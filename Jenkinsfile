@@ -77,6 +77,14 @@ pipeline {
             }
         }
 
+        stage('List Active Docker Containers') {
+            steps {
+                script {
+                    sh 'docker ps'
+                }
+            }
+        }
+
         stage('Wait for MySQL to be Ready') {
             steps {
                 script {
@@ -86,7 +94,8 @@ pipeline {
 
                     while (!isMysqlReady && retryCount < maxRetries) {
                         sleep(10)  // Attendre 10 secondes avant de vérifier à nouveau
-                        def mysqlStatus = sh(script: "docker exec mysql mysql -uroot -e 'SHOW DATABASES;'", returnStatus: true)
+                        // Assurez-vous de remplacer "backend_mysql_1" par le nom correct de votre conteneur MySQL
+                        def mysqlStatus = sh(script: "docker exec backend_mysql_1 mysql -uroot -e 'SHOW DATABASES;'", returnStatus: true)
                         if (mysqlStatus == 0) {
                             echo "MySQL is ready!"
                             isMysqlReady = true
@@ -106,8 +115,9 @@ pipeline {
         stage('Check Tables in MySQL') {
             steps {
                 script {
+                    // Assurez-vous de remplacer "backend_mysql_1" par le nom correct de votre conteneur MySQL
                     def checkTables = sh(script: """
-                        docker exec mysql mysql -uroot -e "USE projetPfe2024; SHOW TABLES;"
+                        docker exec backend_mysql_1 mysql -uroot -e "USE projetPfe2024; SHOW TABLES;"
                     """, returnStdout: true).trim()
                     
                     echo "Tables in MySQL: ${checkTables}"
