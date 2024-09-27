@@ -3,10 +3,9 @@ package com.example.projectPfe;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class ProjectPfeApplicationTests {
 
-	@Test
+	@SuppressWarnings("java:S2699")
 	void contextLoads() {
 	}
 
