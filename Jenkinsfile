@@ -112,22 +112,6 @@ pipeline {
             }
         }
 
-        // stage('Check Tables in MySQL') {
-        //     steps {
-        //         script {
-        //             // Assurez-vous de remplacer "mysql" par le nom correct de votre conteneur MySQL
-        //             def checkTables = sh(script: """
-        //                 docker exec mysql mysql -uroot -e "USE projetPfe2024; SHOW TABLES;"
-        //             """, returnStdout: true).trim()
-                    
-        //             echo "Tables in MySQL: ${checkTables}"
-
-        //             if (!checkTables.contains("expected_table_name")) {
-        //                 error("Expected table not found in MySQL!")
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Run JUnit and Mockito Tests') {
             steps {
