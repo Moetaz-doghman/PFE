@@ -56,29 +56,15 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image to DockerHub and Check Docker Containers') {
+        stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('', registryCredential) {
                         dockerImage.push()
                     }
-                    dir('backend') {
-                        sh 'docker-compose ps'
-                    }
                 }
             }
         }
 
-        stage('Clean Up Docker Images') {
-            steps {
-                dir('backend') {
-                    script {
-                        sh '''
-                        docker rmi $(docker images -f "dangling=true" -q) || true
-                        '''
-                    }
-                }
-            }
-        }
     }
 }
