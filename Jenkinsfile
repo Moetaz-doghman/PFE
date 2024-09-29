@@ -46,39 +46,45 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('SonarQube Analysis') {
             steps {
-                dir('backend') {
-                    script {
-                        dockerImage = docker.build("${registry}:latest")
-                    }
-                }
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
             }
         }
 
-        stage('Push Docker Image to DockerHub and Check Docker Containers') {
-            steps {
-                script {
-                    docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
-                    }
-                    dir('backend') {
-                        sh 'docker-compose ps'
-                    }
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         dir('backend') {
+        //             script {
+        //                 dockerImage = docker.build("${registry}:latest")
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Clean Up Docker Images') {
-            steps {
-                dir('backend') {
-                    script {
-                        sh '''
-                        docker rmi $(docker images -f "dangling=true" -q) || true
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('Push Docker Image to DockerHub and Check Docker Containers') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry('', registryCredential) {
+        //                 dockerImage.push()
+        //             }
+        //             dir('backend') {
+        //                 sh 'docker-compose ps'
+        //             }
+        //         }
+        //     }
+        // }
+
+        // stage('Clean Up Docker Images') {
+        //     steps {
+        //         dir('backend') {
+        //             script {
+        //                 sh '''
+        //                 docker rmi $(docker images -f "dangling=true" -q) || true
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
