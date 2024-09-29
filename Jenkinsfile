@@ -38,10 +38,10 @@ pipeline {
             }
         }
 
-        stage('List Files') {
+        stage('Run JUnit and Mockito Tests') {
             steps {
-                dir('backend') {
-                    sh 'ls -la'  // Vérifie la présence de docker-compose.yml
+                dir('backend') {  
+                    sh 'mvn test'
                 }
             }
         }
@@ -73,56 +73,6 @@ pipeline {
                     docker-compose down || true
                     docker-compose up -d
                     '''
-                }
-            }
-        }
-
-        stage('Wait for MySQL to be Ready') {
-            steps {
-                script {
-                    def isMysqlReady = false
-                    def retryCount = 0
-                    def maxRetries = 10
-
-                    while (!isMysqlReady && retryCount < maxRetries) {
-                        sleep(10)  // Attendre 10 secondes avant de vérifier à nouveau
-                        def mysqlStatus = sh(script: "docker exec mysql mysql -uroot -e 'SHOW DATABASES;'", returnStatus: true)
-                        if (mysqlStatus == 0) {
-                            echo "MySQL is ready!"
-                            isMysqlReady = true
-                        } else {
-                            retryCount++
-                            echo "Waiting for MySQL to be ready... (attempt ${retryCount})"
-                        }
-                    }
-
-                    if (!isMysqlReady) {
-                        error("MySQL is not ready after ${maxRetries} attempts!")
-                    }
-                }
-            }
-        }
-
-        stage('Check Tables in MySQL') {
-            steps {
-                script {
-                    def checkTables = sh(script: """
-                        docker exec mysql mysql -uroot -e "USE projetPfe2024; SHOW TABLES;"
-                    """, returnStdout: true).trim()
-                    
-                    echo "Tables in MySQL: ${checkTables}"
-
-                    if (!checkTables.contains("expected_table_name")) {
-                        error("Expected table not found in MySQL!")
-                    }
-                }
-            }
-        }
-
-        stage('Run JUnit and Mockito Tests') {
-            steps {
-                dir('backend') {  
-                    sh 'mvn test'
                 }
             }
         }
