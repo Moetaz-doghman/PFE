@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout Code from Git') {
             steps {
                 echo "Fetching Project from GitHub"
-                git branch: 'main', url: 'https://github.com/Moetaz-doghman/PFE.git'
+                git branch: 'master', url: 'https://github.com/Moetaz-doghman/PFE.git'
             }
         }
 
