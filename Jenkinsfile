@@ -54,6 +54,12 @@ pipeline {
             }
         }
 
+        stage("Deploy Artifact to Nexus") {
+            steps {
+                sh "mvn deploy "
+            }
+        }
+
         // stage('Build Docker Image') {
         //     steps {
         //         dir('backend') {
