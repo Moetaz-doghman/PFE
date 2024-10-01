@@ -32,8 +32,8 @@ pipeline {
         stage('Build Backend Application') {
             steps {
                 dir('backend') {
-                    sh "chmod +x ./mvnw"
-                    sh "mvn clean package -X -U -DskipTests"
+                    // sh "chmod +x ./mvnw"
+                    sh "mvn clean package -DskipTests"
                 }
             }
         }
