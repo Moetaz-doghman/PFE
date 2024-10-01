@@ -128,12 +128,13 @@
 	</dependencies>
 
 	<distributionManagement>
-		<repository>
-			<id>deploymentRepo</id>
-			<name>Nexus Repository</name>
-			<url>http://192.168.33.10:8081/repository/maven-releases</url>
-		</repository>
+	<repository>
+		<id>deploymentRepo</id> <!-- Doit correspondre à l'ID dans settings.xml -->
+		<url>http://192.168.33.10:8081/repository/maven-releases/</url>
+	</repository>
 	</distributionManagement>
+
+
 	<profiles>
 		<!-- Prod profile -->
 		<profile>

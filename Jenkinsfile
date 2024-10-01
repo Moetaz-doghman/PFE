@@ -20,23 +20,23 @@ pipeline {
             }
         }
 
-        stage("Check JAVA and Maven Environment") {
-            steps {
-                echo "Checking JAVA_HOME and Maven version"
-                sh 'echo $JAVA_HOME'
-                sh 'java -version'
-                sh 'mvn --version'
-            }
-        }
+        // stage("Check JAVA and Maven Environment") {
+        //     steps {
+        //         echo "Checking JAVA_HOME and Maven version"
+        //         sh 'echo $JAVA_HOME'
+        //         sh 'java -version'
+        //         sh 'mvn --version'
+        //     }
+        // }
 
-        stage('Build Backend Application') {
-            steps {
-                dir('backend') {
-                    // sh "chmod +x ./mvnw"
-                    sh "mvn clean package -DskipTests"
-                }
-            }
-        }
+        // stage('Build Backend Application') {
+        //     steps {
+        //         dir('backend') {
+        //             // sh "chmod +x ./mvnw"
+        //             sh "mvn clean package -DskipTests"
+        //         }
+        //     }
+        // }
 
         // stage('Run JUnit and Mockito Tests') {
         //     steps {
