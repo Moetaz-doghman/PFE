@@ -54,50 +54,50 @@ pipeline {
             }
         }
 
-        stage('Deploy Artifact to Nexus') {
+        // stage('Deploy Artifact to Nexus') {
+        //     steps {
+        //         withCredentials([usernamePassword(credentialsId: 'NexusCredentialsId', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+        //             dir('backend') {
+        //                 sh "mvn deploy -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}"
+        //             }
+        //         }
+        //     }
+        // }
+
+
+        stage('Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'NexusCredentialsId', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    dir('backend') {
-                        sh "mvn deploy -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}"
+                dir('backend') {
+                    script {
+                        dockerImage = docker.build("${registry}:latest")
                     }
                 }
             }
         }
 
+        stage('Push Docker Image to DockerHub and Check Docker Containers') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
+                    dir('backend') {
+                        sh 'docker-compose ps'
+                    }
+                }
+            }
+        }
 
-        // stage('Build Docker Image') {
-        //     steps {
-        //         dir('backend') {
-        //             script {
-        //                 dockerImage = docker.build("${registry}:latest")
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Push Docker Image to DockerHub and Check Docker Containers') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', registryCredential) {
-        //                 dockerImage.push()
-        //             }
-        //             dir('backend') {
-        //                 sh 'docker-compose ps'
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Clean Up Docker Images') {
-        //     steps {
-        //         dir('backend') {
-        //             script {
-        //                 sh '''
-        //                 docker rmi $(docker images -f "dangling=true" -q) || true
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Clean Up Docker Images') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh '''
+                        docker rmi $(docker images -f "dangling=true" -q) || true
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
