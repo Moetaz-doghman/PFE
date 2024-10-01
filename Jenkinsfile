@@ -56,7 +56,9 @@ pipeline {
 
         stage("Deploy Artifact to Nexus") {
             steps {
-                sh "mvn deploy "
+                dir('backend') {
+                 sh "mvn deploy "
+                }
             }
         }
 
