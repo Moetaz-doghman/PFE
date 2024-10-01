@@ -20,39 +20,39 @@ pipeline {
             }
         }
 
-        // stage("Check JAVA and Maven Environment") {
-        //     steps {
-        //         echo "Checking JAVA_HOME and Maven version"
-        //         sh 'echo $JAVA_HOME'
-        //         sh 'java -version'
-        //         sh 'mvn --version'
-        //     }
-        // }
+        stage("Check JAVA and Maven Environment") {
+            steps {
+                echo "Checking JAVA_HOME and Maven version"
+                sh 'echo $JAVA_HOME'
+                sh 'java -version'
+                sh 'mvn --version'
+            }
+        }
 
-        // stage('Build Backend Application') {
-        //     steps {
-        //         dir('backend') {
-        //             // sh "chmod +x ./mvnw"
-        //             sh "mvn clean package -DskipTests"
-        //         }
-        //     }
-        // }
+        stage('Build Backend Application') {
+            steps {
+                dir('backend') {
+                    // sh "chmod +x ./mvnw"
+                    sh "mvn clean package -DskipTests"
+                }
+            }
+        }
 
-        // stage('Run JUnit and Mockito Tests') {
-        //     steps {
-        //         dir('backend') {  
-        //             sh 'mvn test'
-        //         }
-        //     }
-        // }
+        stage('Run JUnit and Mockito Tests') {
+            steps {
+                dir('backend') {  
+                    sh 'mvn test'
+                }
+            }
+        }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         dir('backend') {  
-        //             sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                dir('backend') {  
+                    sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
+                }
+            }
+        }
 
         stage("Deploy Artifact to Nexus") {
             steps {
