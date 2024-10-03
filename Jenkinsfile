@@ -2,10 +2,11 @@ pipeline {
     environment { 
         registry = "moetaz457/pfe"
         registryCredential = 'Dockerhub' 
-        dockerImage = '' 
+        dockerImageBackend = '' 
+        dockerImageFrontend = '' 
         MAVEN_OPTS = '-Xms256m -Xmx512m'
-
     }
+
     agent any
 
     tools {
@@ -33,9 +34,7 @@ pipeline {
         stage('Build Backend Application') {
             steps {
                 dir('backend') {
-                    // sh "chmod +x ./mvnw"
                     sh "mvn clean package -DskipTests"
-    
                 }
             }
         }
@@ -48,16 +47,6 @@ pipeline {
             }
         }
 
-        stage('Deploy to Nexus') {
-            steps {
-                dir('backend') {
-                    // sh 'mvn deploy -e -DskipTests=true'
-                  sh 'mvn clean deploy -s /usr/share/maven/conf/settings.xml -DskipTests=true'
-
-                }
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 dir('backend') {  
@@ -66,37 +55,62 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Deploy Backend to Nexus') {
             steps {
                 dir('backend') {
-                    script {
-                        dockerImage = docker.build("${registry}:latest")
+                    sh 'mvn clean deploy -s /usr/share/maven/conf/settings.xml -DskipTests=true'
+                }
+            }
+        }
+
+        stage('Build Frontend (Angular)') {
+            steps {
+                dir('front_end') {
+                    echo "Building Angular Application"
+                    sh 'npm install'
+                    sh 'npm run build --prod'
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    dir('backend') {
+                        dockerImageBackend = docker.build("${registry}:backend-latest")
+                    }
+                    dir('front_end') {
+                        dockerImageFrontend = docker.build("${registry}:frontend-latest")
                     }
                 }
             }
         }
 
-        stage('Push Docker Image to DockerHub and Check Docker Containers') {
+        stage('Push Docker Images to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
+                        dockerImageBackend.push()
+                        dockerImageFrontend.push()
                     }
-                    dir('backend') {
-                        sh 'docker-compose ps'
-                    }
+                }
+            }
+        }
+
+        stage('Check Docker Containers') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose ps'
                 }
             }
         }
 
         stage('Clean Up Docker Images') {
             steps {
-                dir('backend') {
-                    script {
-                        sh '''
-                        docker rmi $(docker images -f "dangling=true" -q) || true
-                        '''
-                    }
+                script {
+                    sh '''
+                    docker rmi $(docker images -f "dangling=true" -q) || true
+                    '''
                 }
             }
         }
