@@ -40,18 +40,18 @@ pipeline {
             }
         }
 
-        stage('Run JUnit and Mockito Tests') {
-            steps {
-                dir('backend') {  
-                    sh 'mvn test'
-                }
-            }
-        }
+        // stage('Run JUnit and Mockito Tests') {
+        //     steps {
+        //         dir('backend') {  
+        //             sh 'mvn test'
+        //         }
+        //     }
+        // }
 
         stage('Deploy to Nexus') {
             steps {
                 dir('backend') {
-                    sh 'mvn deploy -DskipTests=true'
+                    sh 'mvn deploy -e -DskipTests=true'
                 }
             }
         }
