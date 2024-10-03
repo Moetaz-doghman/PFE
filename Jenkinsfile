@@ -12,7 +12,7 @@ pipeline {
     tools {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
-        nodejs 'Node' // Nom donné lors de la configuration dans Jenkins
+        nodejs 'Node' 
 
     }
 
@@ -71,56 +71,56 @@ pipeline {
             }
         }
 
-        // stage('Build Frontend (Angular)') {
-        //     steps {
-        //         dir('front_end') {
-        //             echo "Building Angular Application"
-        //             sh 'npm install'
-        //             sh 'npm run build --prod'
-        //         }
-        //     }
-        // }
+        stage('Build Frontend (Angular)') {
+            steps {
+                dir('front_end') {
+                    echo "Building Angular Application"
+                    sh 'npm install'
+                    sh 'npm run build --prod'
+                }
+            }
+        }
 
-        // stage('Build Docker Images') {
-        //     steps {
-        //         script {
-        //             dir('backend') {
-        //                 dockerImageBackend = docker.build("${registry}:backend-latest")
-        //             }
-        //             dir('front_end') {
-        //                 dockerImageFrontend = docker.build("${registry}:frontend-latest")
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    dir('backend') {
+                        dockerImageBackend = docker.build("${registry}:backend-latest")
+                    }
+                    dir('front_end') {
+                        dockerImageFrontend = docker.build("${registry}:frontend-latest")
+                    }
+                }
+            }
+        }
 
-        // stage('Push Docker Images to DockerHub') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', registryCredential) {
-        //                 dockerImageBackend.push()
-        //                 dockerImageFrontend.push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push Docker Images to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImageBackend.push()
+                        dockerImageFrontend.push()
+                    }
+                }
+            }
+        }
 
-        // stage('Check Docker Containers') {
-        //     steps {
-        //         dir('backend') {
-        //             sh 'docker-compose ps'
-        //         }
-        //     }
-        // }
+        stage('Check Docker Containers') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose ps'
+                }
+            }
+        }
 
-        // stage('Clean Up Docker Images') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //             docker rmi $(docker images -f "dangling=true" -q) || true
-        //             '''
-        //         }
-        //     }
-        // }
+        stage('Clean Up Docker Images') {
+            steps {
+                script {
+                    sh '''
+                    docker rmi $(docker images -f "dangling=true" -q) || true
+                    '''
+                }
+            }
+        }
     }
 }
