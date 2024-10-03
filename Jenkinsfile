@@ -4,6 +4,7 @@ pipeline {
         registryCredential = 'Dockerhub' 
         dockerImage = '' 
         MAVEN_OPTS = '-Xms256m -Xmx512m'
+
     }
     agent any
 

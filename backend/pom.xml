@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>projectPfe</artifactId>
-	<version>1.0-RELEASE</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>projectPfe</name>
 	<description>Demo project for Spring Boot</description>
     <properties>
@@ -127,15 +127,13 @@
 
 	</dependencies>
 
-	    <distributionManagement>
-        <repository>
-            <id>deploymentRepo</id>
-            <name>deploymentRepo</name>
-            <url>http://192.168.33.10:8081/repository/deploymentRepo/</url>
-        </repository>
+	<distributionManagement>
+	<repository>
+		<id>deploymentRepo</id>
+		<name>Nexus Repository</name>
+		<url>http://192.168.33.10:8081/repository/maven-snapshots/</url>
+	</repository>
     </distributionManagement>
-
-
 
 	<profiles>
 		<!-- Prod profile -->
