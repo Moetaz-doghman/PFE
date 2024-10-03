@@ -40,13 +40,13 @@ pipeline {
             }
         }
 
-        // stage('Run JUnit and Mockito Tests') {
-        //     steps {
-        //         dir('backend') {  
-        //             sh 'mvn test'
-        //         }
-        //     }
-        // }
+        stage('Run JUnit and Mockito Tests') {
+            steps {
+                dir('backend') {  
+                    sh 'mvn test'
+                }
+            }
+        }
 
         stage('Deploy to Nexus') {
             steps {
@@ -58,58 +58,58 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         dir('backend') {  
-        //             sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                dir('backend') {  
+                    sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
+                }
+            }
+        }
 
-        // stage('Deploy Artifact to Nexus') {
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'NexusCredentialsId', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-        //             dir('backend') {
-        //                 sh "mvn deploy -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Deploy Artifact to Nexus') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'NexusCredentialsId', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    dir('backend') {
+                        sh "mvn deploy -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}"
+                    }
+                }
+            }
+        }
 
 
-        // stage('Build Docker Image') {
-        //     steps {
-        //         dir('backend') {
-        //             script {
-        //                 dockerImage = docker.build("${registry}:latest")
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Build Docker Image') {
+            steps {
+                dir('backend') {
+                    script {
+                        dockerImage = docker.build("${registry}:latest")
+                    }
+                }
+            }
+        }
 
-        // stage('Push Docker Image to DockerHub and Check Docker Containers') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('', registryCredential) {
-        //                 dockerImage.push()
-        //             }
-        //             dir('backend') {
-        //                 sh 'docker-compose ps'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Push Docker Image to DockerHub and Check Docker Containers') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
+                    dir('backend') {
+                        sh 'docker-compose ps'
+                    }
+                }
+            }
+        }
 
-        // stage('Clean Up Docker Images') {
-        //     steps {
-        //         dir('backend') {
-        //             script {
-        //                 sh '''
-        //                 docker rmi $(docker images -f "dangling=true" -q) || true
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Clean Up Docker Images') {
+            steps {
+                dir('backend') {
+                    script {
+                        sh '''
+                        docker rmi $(docker images -f "dangling=true" -q) || true
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
