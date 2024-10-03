@@ -4,7 +4,7 @@ pipeline {
         registryCredential = 'Dockerhub' 
         dockerImage = '' 
         MAVEN_OPTS = '-Xms256m -Xmx512m'
-        NEXUS_URL = 'http://192.168.33.10:8081/repository/maven-releases/'
+        NEXUS_URL = 'http://192.168.33.10:8081/#browse/browse:maven-releases'
         NEXUS_USERNAME = 'admin'
         NEXUS_PASSWORD = 'nexus'
     }
