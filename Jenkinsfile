@@ -5,7 +5,8 @@ pipeline {
         dockerImage = '' 
         MAVEN_OPTS = '-Xms256m -Xmx512m'
         NEXUS_URL = 'http://192.168.33.10:8081/repository/maven-releases/'
-        NEXUS_CREDENTIALS = credentials('nexus-credentials')
+        NEXUS_USERNAME = 'admin'
+        NEXUS_PASSWORD = 'nexus'
     }
     agent any
 
@@ -51,7 +52,7 @@ pipeline {
         stage('Deploy to Nexus') {
             steps {
                 dir('backend') {
-                    sh 'mvn deploy -DaltDeploymentRepository=nexus::default::$NEXUS_URL -DskipTests=true -Dnexus.username=$NEXUS_CREDENTIALS_USR -Dnexus.password=$NEXUS_CREDENTIALS_PSW'
+                    sh 'mvn deploy -DaltDeploymentRepository=nexus::default::$NEXUS_URL -Dnexus.username=$NEXUS_USERNAME -Dnexus.password=$NEXUS_PASSWORD -DskipTests=true'
                 }
             }
         }
