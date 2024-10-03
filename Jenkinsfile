@@ -76,7 +76,6 @@ pipeline {
                 dir('front_end') {
                     echo "Building Angular Application"
                     sh 'npm install'
-                    sh 'npm run build --prod'
                 }
             }
         }
