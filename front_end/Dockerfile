@@ -1,15 +1,23 @@
-FROM node:18-alpine AS build
-WORKDIR /app
+# Utiliser une image de Node.js avec la version souhaitée
+FROM node:18.10.0
 
+# Créer le répertoire de l'application
+WORKDIR /usr/src/app
+
+# Copier package.json et package-lock.json
 COPY package*.json ./
 
+# Installer les dépendances
 RUN npm install
 
+# Copier le reste du code
 COPY . .
 
+# Construire l'application Angular
 RUN npm run build --prod
 
-FROM nginx:alpine
-COPY --from=build /app/dist/<nom-du-projet-angular> /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Exposer le port (ajuste si nécessaire)
+EXPOSE 4200
+
+# Commande par défaut
+CMD ["npm", "start"]

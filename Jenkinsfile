@@ -67,11 +67,12 @@ pipeline {
             steps {
                 dir('front_end') {
                     echo "Building Angular Application"
-                    sh 'source ~/.nvm/nvm.sh && nvm use 18.10.0 && npm install'
-                    sh 'source ~/.nvm/nvm.sh && nvm use 18.10.0 && npm run build --prod'
+                    sh '. ~/.nvm/nvm.sh && nvm use 18.10.0 && npm install'
+                    sh '. ~/.nvm/nvm.sh && nvm use 18.10.0 && npm run build --prod'
                 }
             }
         }
+
 
         stage('Build Docker Images') {
             steps {
