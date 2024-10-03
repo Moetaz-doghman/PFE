@@ -51,7 +51,9 @@ pipeline {
         stage('Deploy to Nexus') {
             steps {
                 dir('backend') {
-                    sh 'mvn deploy -e -DskipTests=true'
+                    // sh 'mvn deploy -e -DskipTests=true'
+                  sh 'mvn clean deploy -s /usr/share/maven/conf/settings.xml -DskipTests=true'
+
                 }
             }
         }
