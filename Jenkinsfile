@@ -34,7 +34,8 @@ pipeline {
             steps {
                 dir('backend') {
                     // sh "chmod +x ./mvnw"
-                    sh "mvn mvn clean install -U -DskipTests"
+                    sh "mvn clean install -U -DskipTests"
+    
                 }
             }
         }
