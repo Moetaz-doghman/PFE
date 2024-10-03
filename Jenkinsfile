@@ -67,8 +67,8 @@ pipeline {
             steps {
                 dir('front_end') {
                     echo "Building Angular Application"
-                    sh 'npm install'
-                    sh 'npm run build --prod'
+                    sh 'source ~/.nvm/nvm.sh && nvm use 18.10.0 && npm install'
+                    sh 'source ~/.nvm/nvm.sh && nvm use 18.10.0 && npm run build --prod'
                 }
             }
         }
