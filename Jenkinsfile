@@ -12,6 +12,8 @@ pipeline {
     tools {
         jdk 'JAVA_HOME'
         maven 'M2_HOME'
+        nodejs 'Node' // Nom donné lors de la configuration dans Jenkins
+
     }
 
     stages {
