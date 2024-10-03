@@ -63,16 +63,21 @@ pipeline {
         //     }
         // }
 
+        stage('Check Node.js Version') {
+            steps {
+                sh 'node -v'
+            }
+        }
+
         stage('Build Frontend (Angular)') {
             steps {
                 dir('front_end') {
                     echo "Building Angular Application"
-                    sh '. ~/.nvm/nvm.sh && nvm use 18.10.0 && npm install'
-                    sh '. ~/.nvm/nvm.sh && nvm use 18.10.0 && npm run build --prod'
+                    sh 'npm install'
+                    sh 'npm run build --prod'
                 }
             }
         }
-
 
         stage('Build Docker Images') {
             steps {
