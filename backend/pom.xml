@@ -129,16 +129,16 @@
 
 	<distributionManagement>
 		<repository>
-			<id>maven-releases</id>
+			<id>nexus</id>
+			<name>Nexus Repository</name>
 			<url>http://192.168.33.10:8081/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>maven-snapshots</id>
+			<id>nexus-snapshots</id>
+			<name>Nexus Snapshots</name>
 			<url>http://192.168.33.10:8081/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
-
 
 	<profiles>
 		<!-- Prod profile -->
@@ -184,6 +184,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>3.0.0-M1</version>
 			</plugin>
 		</plugins>
 	</build>
