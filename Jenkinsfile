@@ -66,17 +66,6 @@ pipeline {
             }
         }
 
-        stage('Deploy Artifact to Nexus') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'NexusCredentialsId', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    dir('backend') {
-                        sh "mvn deploy -Dusername=${NEXUS_USER} -Dpassword=${NEXUS_PASS}"
-                    }
-                }
-            }
-        }
-
-
         stage('Build Docker Image') {
             steps {
                 dir('backend') {
