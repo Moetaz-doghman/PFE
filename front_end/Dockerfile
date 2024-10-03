@@ -13,9 +13,6 @@ RUN npm install
 # Copier le reste du code
 COPY . .
 
-# Construire l'application Angular
-RUN npm run build
-
 # Exposer le port (ajuste si nécessaire)
 EXPOSE 4200
 
