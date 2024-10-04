@@ -24,14 +24,14 @@ pipeline {
             }
         }
 
-        stage("Check JAVA and Maven Environment") {
-            steps {
-                echo "Checking JAVA_HOME and Maven version"
-                sh 'echo $JAVA_HOME'
-                sh 'java -version'
-                sh 'mvn --version'
-            }
-        }
+        // stage("Check JAVA and Maven Environment") {
+        //     steps {
+        //         echo "Checking JAVA_HOME and Maven version"
+        //         sh 'echo $JAVA_HOME'
+        //         sh 'java -version'
+        //         sh 'mvn --version'
+        //     }
+        // }
 
         stage('Build Backend Application') {
             steps {
@@ -62,12 +62,6 @@ pipeline {
                 dir('backend') {
                     sh 'mvn clean deploy -s /usr/share/maven/conf/settings.xml -DskipTests=true'
                 }
-            }
-        }
-
-        stage('Check Node.js Version') {
-            steps {
-                sh 'node -v'
             }
         }
 
@@ -104,14 +98,6 @@ pipeline {
             }
         }
 
-        stage('Check Docker Containers') {
-            steps {
-                dir('backend') {
-                    sh 'docker-compose ps'
-                }
-            }
-        }
-
         stage('Clean Up Docker Images') {
             steps {
                 script {
@@ -122,4 +108,19 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+
+
+            emailext to: "doghman.moetaz@gmail.com",
+              subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+                             body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}",
+                            attachLog: true
+
+        }
+    }
+
+
+    
 }
