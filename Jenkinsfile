@@ -110,17 +110,21 @@ pipeline {
     }
 
     post {
-        always {
+            always {
+                emailext to: "doghman.moetaz@gmail.com",
+                    subject: "jenkins build: ${currentBuild.currentResult}: ${env.JOB_NAME}",
+                    body: """
+                        Bonjour Moetaz Doghman,
 
+                        Le résultat de la dernière exécution du job Jenkins est : ${currentBuild.currentResult}
 
-            emailext to: "doghman.moetaz@gmail.com",
-              subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
-                             body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}",
-                            attachLog: true
+                        Plus d'informations peuvent être trouvées ici : ${env.BUILD_URL}
 
+                        Cordialement,
+                        Jenkins
+                    """,
+                    from: "Moetaz Doghman <doghman.moetaz@gmail.com>",
+                    attachLog: true
+            }
         }
-    }
-
-
-    
 }
