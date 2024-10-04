@@ -114,14 +114,14 @@ pipeline {
                 emailext to: "doghman.moetaz@gmail.com",
                     subject: "jenkins build: ${currentBuild.currentResult}: ${env.JOB_NAME}",
                     body: """
-                        Bonjour Moetaz Doghman,
+                    Bonjour Moetaz Doghman,
 
-                        Le résultat de la dernière exécution du job Jenkins est : ${currentBuild.currentResult}
+                    Le résultat de la dernière exécution du job Jenkins est : ${currentBuild.currentResult}
 
-                        Plus d'informations peuvent être trouvées ici : ${env.BUILD_URL}
+                    Plus d'informations peuvent être trouvées ici : ${env.BUILD_URL}
 
-                        Cordialement,
-                        Jenkins
+                    Cordialement,
+                    Jenkins
                     """,
                     from: "Moetaz Doghman <doghman.moetaz@gmail.com>",
                     attachLog: true
