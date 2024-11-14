@@ -90,6 +90,7 @@ export class BordereauFacturesComponent  implements OnInit {
   }
 
   filterByDate() {
+    console.log(this.today);
     if (!this.startDate) {
       this.openSnackBar('Veuillez sélectionner une date de début.');
       return;
@@ -105,19 +106,24 @@ export class BordereauFacturesComponent  implements OnInit {
     const startDate = new Date(this.startDate);
 
     if (startDate > endDate) {
-      this.openSnackBar(
-        'La date de début doit être antérieure à la date de fin.'
-      );
+      this.openSnackBar('La date de début doit être antérieure à la date de fin.');
       return;
     }
 
+    // Filtre les bordereaux par date et met à jour le tableau
     this.filteredBordereaux = this.bordereaux.filter((bordereaux) => {
       const bordereauxDate = new Date(bordereaux.dateCreationF);
       return bordereauxDate >= startDate && bordereauxDate <= endDate;
     });
 
     this.filterApplied = true;
-  }
+
+    // Met à jour le dataSource avec les bordereaux filtrés
+    this.dataSource.data = this.filteredBordereaux;
+    this.totalItems = this.filteredBordereaux.length;
+    this.paginator.firstPage();  // Réinitialise la pagination
+}
+
 
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Fermer', {
@@ -193,6 +199,7 @@ export class BordereauFacturesComponent  implements OnInit {
       this.openSnackBar('Données non disponibles pour générer le PDF.');
     }
   }
+
   waitForDataToBeReady(): Promise<void> {
     return new Promise<void>((resolve) => {
       const interval = setInterval(() => {

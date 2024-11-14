@@ -21,7 +21,7 @@ export class RapportServiceService {
   findRapportByPrestationId(prestationId: number): Observable<Rapport_C_V_Optcien> {
     const url = `${this.baseUrl}/byPrestationId/${prestationId}`;
     return this.http.get<Rapport_C_V_Optcien>(url);
-      
+
   }
 
 

@@ -1,0 +1,52 @@
+version: '3.7'
+ services:
+   web:
+ 	image: my-odoo-image:latest
+ 	depends_on:
+   	- db
+ 	ports:
+   	- "8099:8069"
+ 	entrypoint:
+   	- /wait-for-it.sh
+   	- db
+   	- "5432"
+   	- --
+   	- odoo
+  	 - -i
+   	- base
+   	- -d
+   	- demo_odoo_database
+ 	volumes:
+   	- ./filestore:/var/lib/odoo
+   	- ./config:/etc/odoo
+   	- ./wait-for-it.sh:/wait-for-it.sh
+ 	networks:
+   	- webnet
+
+   db:
+ 	image: postgres:15
+ 	ports:
+   	- "6432:5432"
+ 	environment:
+   	- POSTGRES_DB=postgres
+   	- POSTGRES_PASSWORD=odoo
+   	- POSTGRES_USER=odoo
+ 	volumes:
+   	- ./odoo-db-data:/var/lib/postgresql/data
+ 	networks:
+   	- webnet
+
+   pgadmin:
+ 	container_name: pgadmin4_container
+ 	image: dpage/pgadmin4
+ 	restart: always
+ 	environment:
+   	PGADMIN_DEFAULT_EMAIL: admin@admin.com
+   	PGADMIN_DEFAULT_PASSWORD: root
+ 	ports:
+   	- "5050:80"
+ 	networks:
+   	- webnet
+
+ networks:
+   webnet:

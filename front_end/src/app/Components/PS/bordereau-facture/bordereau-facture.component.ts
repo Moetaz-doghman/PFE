@@ -118,14 +118,8 @@ export class BordereauFactureComponent implements OnInit {
       return;
     }
 
-    let endDate: Date;
-    if (!this.endDate) {
-      endDate = new Date();
-    } else {
-      endDate = new Date(this.endDate);
-    }
-
     const startDate = new Date(this.startDate);
+    const endDate = this.endDate ? new Date(this.endDate) : new Date();
 
     if (startDate > endDate) {
       this.openSnackBar(
@@ -139,8 +133,11 @@ export class BordereauFactureComponent implements OnInit {
       return bordereauxDate >= startDate && bordereauxDate <= endDate;
     });
 
+    // Synchroniser avec dataSource pour actualiser le tableau
+    this.dataSource.data = this.filteredBordereaux;
     this.filterApplied = true;
   }
+
 
   openSnackBar(message: string) {
     this.snackBar.open(message, 'Fermer', {
